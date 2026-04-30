@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 // import "./Sessions.css";
 //client/src/pages/Sessions.css
 
-const API = "http://localhost:3000";
+const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
 
 export default function Sessions() {

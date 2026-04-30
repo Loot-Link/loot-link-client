@@ -1,0 +1,21 @@
+.steam-game {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.steam-game-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.steam-game-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.steam-game-meta {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
