@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 
-const API = "http://localhost:3000";
+const API = "http://localhost:3000/api";
 
 export default function Home() {
   const { token } = useAuth();

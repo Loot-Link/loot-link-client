@@ -3,7 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
 
 
-const API = "http://localhost:3000";
+const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
 
 export default function Games() {
@@ -13,7 +13,7 @@ export default function Games() {
 
   const syncGames = async () => {
     // const response = await fetch(`${API}/games`);
-    const response = await fetch(`${API}/api/games`);
+    const response = await fetch(`${API}/games`);
     const data = await response.json();
     console.log(data);
     setGames(data);

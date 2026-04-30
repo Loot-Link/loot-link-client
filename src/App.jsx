@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Layout from "./layout/Layout";
 import Games from "./pages/games";
+import Profile from "./pages/profile";
 import Sessions from "./pages/sessions";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="login" element={<Login />} /> 
         <Route path="games" element={<Games />} /> 
+        <Route path="profile" element={<Profile />} /> 
         <Route path="sessions" element={<Sessions />} /> 
         <Route path="register" element={<Register />} /> 
       </Route>
