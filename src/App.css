@@ -182,3 +182,30 @@
     border-right-color: var(--border);
   }
 }
+
+.psn-input-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.psn-input-group input {
+  background: #1a1a2e;
+  border: 1px solid #30363d;
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.connect-button.psn {
+  background-color: #003791; /* PlayStation Blue */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.connect-button.psn:hover {
+  background-color: #002d6c; /* Darker PlayStation Blue */
+}
+
