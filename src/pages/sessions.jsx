@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
 
-// import "./Sessions.css";
+import "./sessions.css";
 //client/src/pages/Sessions.css
 
 const API = "http://localhost:3000/api";
