@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
-import CreateSessionDialog from "./CreateSessionDialog"; // Added import
+import CreateSessionDialog from "./CreateSessionDialog"; // Added importimport "./games.css";
 
 const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
