@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+
 const API = import.meta.env.VITE_API;
 
 const AuthContext = createContext();
@@ -7,7 +8,13 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [user, setUser] = useState(null);
   
-
+  useEffect(() => {
+    if (token && !user) {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      setUser(payload);
+    }
+  }, [token]);
+  
   const register = async (credentials) => {
     const response = await fetch(API + "/api/users/register", {
       method: "POST",
@@ -47,7 +54,8 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token");
   };
 
-  const value = { token, register, login, logout };
+  // const value = { token, register, login, logout };
+  const value = { token, user, register, login, logout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

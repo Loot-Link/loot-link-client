@@ -83,7 +83,9 @@ export default function Profile() {
       const res = await fetch(`${API}/xbox/${user.xbox_xuid}/profile`);
       const data = await res.json();
       console.log("Xbox profile response:", data);
-      setXboxProfile(data.data.content.profileUsers[0]);
+      // setXboxProfile(data.data.content.profileUsers[0]);
+      
+      setXboxProfile(data?.data?.profileUsers?.[0] || data?.data?.content?.profileUsers?.[0]);
     }
 
     getXboxProfile();
@@ -105,31 +107,6 @@ export default function Profile() {
   const connectSteam = () => {
     window.location.href = `${API}/connections/steam?token=${token}`;
   };
- //Xbox Connection - XBL
-  // const connectXbox = async () => {
-  //   const xboxRes = await fetch(`${API}/xbox/account`);
-  //   const xboxData = await xboxRes.json();
-  //   console.log("Xbox data:", xboxData);
-
-
-  //   const response = await fetch(`${API}/connections/xbox`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //     body: JSON.stringify({
-  //       userId: user.user_id,
-  //       xboxXuid: xboxData.content.profileUsers[0].id,
-  //       xboxGamertag: xboxData.content.profileUsers[0].settings.find(
-  //         (s) => s.id === "Gamertag"
-  //       ).value,
-  //     }),
-  //   });
-
-  //   console.log("Xbox response status:", response.status);
-  //   window.location.reload();
-  // };
 
 
   const connectXbox = () => {
@@ -137,7 +114,9 @@ export default function Profile() {
   };
 
 
-
+  const connectBattleNet = () => {
+    window.location.href = `${API}/connections/battlenet?token=${token}`;
+  };
 
 
   if (error) return <p>{error}</p>;
@@ -151,9 +130,9 @@ export default function Profile() {
 
 
   return (
-    <main className="auth-page">
-      <section className="auth-card">
-        <h1 className="auth-title">Profile</h1>
+    <main className="profile-page">
+      <section className="profile-card">
+        <h1 className="profile-title">Profile</h1>
 
         <p>
           <strong>Username:</strong> {user.username}
@@ -165,72 +144,67 @@ export default function Profile() {
 
         <hr />
 
-        <h2>Connected Accounts</h2>
+        {/* <h2>Connected Accounts</h2> */}
 
 
+        <h2 className="profile-section-title">Connected Accounts</h2>
 
-        {user.xbox_xuid ? (
-          <p>
-            <strong>Xbox:</strong> Connected ✅
-          </p>
-        ) : (
-          <>
-            <p>
-              <strong>Xbox:</strong> Not connected
-            </p>
-
-            <button className="auth-button" onClick={connectXbox}>
-              Connect Xbox
+        <div className="profile-platforms">
+          <div className="profile-platform">
+            <h3>Battle.net</h3>
+            <button className="profile-button" onClick={connectBattleNet}>
+              Connect BNET
             </button>
-          </>
-        )}
-
-        {xboxProfile && (
-          <div>
-            <h3>Xbox Profile</h3>
-            <p>
-              <strong>Gamertag:</strong>{" "}
-              {xboxProfile.settings.find((s) => s.id === "Gamertag")?.value}
-            </p>
-            <p>
-              <strong>Gamerscore:</strong>{" "}
-              {xboxProfile.settings.find((s) => s.id === "Gamerscore")?.value}
-            </p>
           </div>
-        )}
 
+          <div className="profile-platform">
+            <h3>Xbox</h3>
 
+            {user.xbox_xuid ? (
+              <p className="connected">Connected ✅</p>
+            ) : (
+              <>
+                <p className="not-connected">Not connected</p>
+                <button className="profile-button" onClick={connectXbox}>
+                  Connect Xbox
+                </button>
+              </>
+            )}
 
-
-
-
-
-        {user.steam_id ? (
-          <p>
-            <strong>Steam:</strong> Connected ✅
-          </p>
-        ) : (
-          <>
-            <p>
-              <strong>Steam:</strong> Not connected
-            </p>
-
-            <button className="auth-button" onClick={connectSteam}>
-              Connect Steam
-            </button>
-          </>
-        )}
-
-        {games.length > 0 && (
-          <div>
-            <h3>Recent Games</h3>
-            {games.map((game) => (
-              <p key={game.appid}>
-                {game.name} — {Math.round(game.playtime_2weeks / 60)} hrs
-              </p>
-            ))}
+            {xboxProfile && (
+              <div className="profile-subsection">
+                <p><strong>Gamertag:</strong> {xboxProfile.settings.find((s) => s.id === "Gamertag")?.value}</p>
+                <p><strong>Gamerscore:</strong> {xboxProfile.settings.find((s) => s.id === "Gamerscore")?.value}</p>
+              </div>
+            )}
           </div>
-        )}
+
+          <div className="profile-platform">
+            <h3>Steam</h3>
+
+            {user.steam_id ? (
+              <p className="connected">Connected ✅</p>
+            ) : (
+              <>
+                <p className="not-connected">Not connected</p>
+                <button className="profile-button" onClick={connectSteam}>
+                  Connect Steam
+                </button>
+              </>
+            )}
+
+            {games.length > 0 && (
+              <div className="profile-subsection">
+                <h4>Recent Games</h4>
+                {games.map((game) => (
+                  <p key={game.appid}>
+                    {game.name} — {Math.round(game.playtime_2weeks / 60)} hrs
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {mySteamGames.length > 0 && (
           <div className="steam-games">
