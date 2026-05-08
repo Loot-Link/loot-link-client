@@ -82,7 +82,7 @@ console.log("logged in user:", user);
   });
 
   setNewMessage("");
-  syncSessionMessages();
+  await syncSessionMessages();
 };
   
 
