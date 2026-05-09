@@ -64,7 +64,6 @@ export default function friendsList(){
             fetchRequests();
         }
     } 
-
     useEffect(()=>{
         if(token){
             fetchFriends();
@@ -95,7 +94,7 @@ export default function friendsList(){
           ))
         ) : (
           requests.map(req => (
-            <div key={req.user_id_1} className="request-card">
+            <div key={req.user_id_1 + req.user_id_2} className="request-card">
               <p>New Request from User ID: {req.request_sender_id}</p>
               <button onClick={() => handleAccept(req.request_sender_id)}>Accept</button>
             </div>
