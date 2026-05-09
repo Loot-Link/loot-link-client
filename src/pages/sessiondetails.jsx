@@ -18,14 +18,14 @@ export default function SessionDetails() {
   const [newMessage, setNewMessage] = useState("");
   const { token, user } = useAuth();
 
-console.log("logged in user:", user);
+// console.log("logged in user:", user);
 
 
 //Session Data - How to get the data ***************************************************
   const syncSession = async () => {
     const response = await fetch(`${API}/sessions/${sessionId}`);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     setSession(data);
   };
 //Session Data - When to get the data
@@ -58,7 +58,7 @@ console.log("logged in user:", user);
       return;
     } 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     setSessionMessages(data);
   };
 //Session Users Data - When to get the data
@@ -82,10 +82,12 @@ console.log("logged in user:", user);
   });
 
   setNewMessage("");
-  syncSessionMessages();
+  await syncSessionMessages();
+  // syncSessionMessages();
 };
   
-
+console.log(user);
+console.log(sessionMessages);
 return (
   <div className="session-details-page">
 
@@ -155,7 +157,8 @@ return (
               <div
                 key={msg.session_message_id}
                 className={`chat-message ${
-                  msg.user_id === user?.id ? "own-message" : ""
+                  // msg.user_id === user?.id ? "own-message" : ""
+                  Number(msg.user_id) === Number(user?.user_id) ? "own-message" : ""
                 }`}
               >
 
@@ -183,6 +186,11 @@ return (
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSendMessage();
+                }
+              }}
               placeholder="Type a message..."
             />
             <button onClick={handleSendMessage}>Send</button>
