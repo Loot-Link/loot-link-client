@@ -37,6 +37,9 @@ export default function Navbar() {
             <NavLink to="/profile" className="main-nav__link">
               Profile
             </NavLink>
+            <NavLink to="/friends" className="main-nav__link">
+              Friends
+            </NavLink>
           </nav>
         </div>
 

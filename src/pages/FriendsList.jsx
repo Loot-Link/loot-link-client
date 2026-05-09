@@ -3,11 +3,12 @@ import { useAuth } from "../auth/AuthContext";
 
 const API = "http://localhost:3000/api";
 
-export default function friendsList(){
+export default function FriendsList(){
     const { token, user } = useAuth();
     const [ friends, setFriends] = useState([]);
     const [ requests, setRequests ] = useState([]);
     const [ view, setView ] = useState("friends");
+    const [targetId, setTargetId] = useState("");
 
     const fetchFriends = async () =>{
         const response = await fetch(`${API}/friendslist`, 
@@ -22,7 +23,7 @@ export default function friendsList(){
     const fetchRequests = async () =>{
         const response = await fetch(`${API}/friendslist/requests`,
             {
-                headers: { "Authorization:" : `Bearer ${token}`}
+                headers: { "Authorization" : `Bearer ${token}`}
             });
         const data = await response.json();
         setRequests(data);
@@ -95,11 +96,25 @@ export default function friendsList(){
         ) : (
           requests.map(req => (
             <div key={req.user_id_1 + req.user_id_2} className="request-card">
-              <p>New Request from User ID: {req.request_sender_id}</p>
+              <p>New Request from {req.username}</p>
               <button onClick={() => handleAccept(req.request_sender_id)}>Accept</button>
             </div>
           ))
         )}
+      </section>
+      <section>
+        <h3>Add friend by ID</h3>
+        <div className="add-friend">
+          <input 
+            type="text"
+            placeholder="Enter User ID..."
+            value={targetId}
+            onChange={(e)=>setTargetId(e.target.value)}
+          />
+          <button onClick={()=>handleSendRequest(targetId)} disabled={!targetId}>
+            Add Friend
+          </button>
+        </div>
       </section>
     </div>
   );
