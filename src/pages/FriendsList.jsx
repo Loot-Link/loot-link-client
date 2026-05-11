@@ -30,9 +30,9 @@ export default function FriendsList(){
     }
 
 
-    const handleSendRequest = async (receiverId) =>{
+    const handleSendRequest = async (username) =>{
     try {
-        const response = await fetch(`${API}/friendslist/request/${receiverId}`,
+        const response = await fetch(`${API}/friendslist/request/${username}`,
             {
                 method: "POST",
                 headers: {
@@ -72,6 +72,26 @@ export default function FriendsList(){
         }
     },[]);
 
+    const friendView = friends.map((friend) =>(
+      <div key={friend.user_id} className="friend-card">
+        <p>{friend.username}</p>
+      </div>
+    ));
+
+    const requestsView = requests.map((req)=>{
+      const isReceived = Number(req.request_sender_id) !== Number(user.id);
+      console.log(user.id);
+      return (
+        <div key={req.user_id_1 + req.user_id_2} className="request-card">
+          <span>{req.friend_username}</span>
+          {isReceived ? (
+            <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
+          ) : (
+            <span className="sent-request">-Pending</span>
+          )}
+        </div>
+      );
+    });
     return (
     <div className="friends-page">
       <header className="friends-header">
@@ -87,27 +107,14 @@ export default function FriendsList(){
       </header>
 
       <section className="friends-content">
-        {view === "friends" ? (
-          friends.map(friend => (
-            <div key={friend.user_id} className="friend-card">
-              <p>{friend.username}</p>
-            </div>
-          ))
-        ) : (
-          requests.map(req => (
-            <div key={req.user_id_1 + req.user_id_2} className="request-card">
-              <p>New Request from {req.username}</p>
-              <button onClick={() => handleAccept(req.request_sender_id)}>Accept</button>
-            </div>
-          ))
-        )}
+        {view === "friends" ? friendView : requestsView }
       </section>
       <section>
-        <h3>Add friend by ID</h3>
+        <h3>Add friend by Username</h3>
         <div className="add-friend">
           <input 
             type="text"
-            placeholder="Enter User ID..."
+            placeholder="Enter Username..."
             value={targetId}
             onChange={(e)=>setTargetId(e.target.value)}
           />
@@ -118,6 +125,4 @@ export default function FriendsList(){
       </section>
     </div>
   );
-
-
 }
