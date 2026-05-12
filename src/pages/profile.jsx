@@ -8,12 +8,13 @@ export default function Profile() {
   const { token } = useAuth();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  
+  const [games, setRecentSteamGames] = useState([]);
   const [mySteamGames, setMySteamGames] = useState([]);
   const [xboxProfile, setXboxProfile] = useState(null);
+  const [mySessions, setMySessions] = useState([]); // Added for Active Sessions
 
-// LootLink ************************************************************************************************
-  //Profile Data Fetch - my loot link db profile.
+  // LootLink ************************************************************************************************
+  // Profile Data Fetch
   useEffect(() => {
     async function getProfile() {
       try {
@@ -23,170 +24,145 @@ export default function Profile() {
         if (!res.ok) throw new Error("Could not load profile");
         const data = await res.json();
         setUser(data);
-      } catch (err) { setError(err.message); }
+      } catch (err) {
+        setError(err.message);
+      }
     }
     if (token) getProfile();
   }, [token]);
 
-// STEAM ************************************************************************************************
-  //Fetch my RECENT steam games
+  // Fetch My Active Sessions
   useEffect(() => {
-    async function getSteamData() {
+    async function getMySessions() {
+      try {
+        // This hits the route that calls getSessionsByUserId
+        const res = await fetch(`${API}/sessions/user/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        setMySessions(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Sessions Error:", err);
+      }
+    }
+    if (token) getMySessions();
+  }, [token]);
+
+  // STEAM ************************************************************************************************
+  useEffect(() => {
+    async function getRecentSteamGames() {
+      if (!user?.steam_id) return;
+      try {
+        const res = await fetch(`${API}/steam/${user.steam_id}/recent-games`);
+        const data = await res.json();
+        // Steam API usually nests the array in response.games
+        setRecentSteamGames(data.response?.games || []);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    getRecentSteamGames();
+  }, [user?.steam_id]);
+
+  useEffect(() => {
+    async function getMySteamGames() {
       if (!user?.steam_id) return;
       try {
         const res = await fetch(`${API}/steam/${user.steam_id}/owned-games`);
         const data = await res.json();
-        // Steam usually nests games in response.games
-        const list = data.response?.games || data.games || data || [];
-        setMySteamGames(Array.isArray(list) ? list : []);
-      } catch (err) { console.error("Steam Error:", err); }
+        setMySteamGames(data.response?.games || []);
+      } catch (err) {
+        console.error(err);
+      }
     }
-    getSteamData();
+    getMySteamGames();
   }, [user?.steam_id]);
 
-  useEffect(() => {
-    async function getPsnGames() {
-      if (!user?.psn_id) return;
-      try {
-        const res = await fetch(`${API}/playstation/${user.psn_id}/games`);
-        const data = await res.json();
-        // Sony data often lives in .titles
-        const list = data.titles || data || [];
-        setPsnGames(Array.isArray(list) ? list : []);
-      } catch (err) { console.error("PSN Error:", err); }
-    }
-
-    getMySteamGames();
-  }, [user]);
-
-
-
-// XBOX ************************************************************************************************
+  // XBOX ************************************************************************************************
   useEffect(() => {
     async function getXboxProfile() {
       if (!user?.xbox_xuid) return;
-
       const res = await fetch(`${API}/xbox/${user.xbox_xuid}/profile`);
       const data = await res.json();
-      console.log("Xbox profile response:", data);
-      // setXboxProfile(data.data.content.profileUsers[0]);
-      
       setXboxProfile(data?.data?.profileUsers?.[0] || data?.data?.content?.profileUsers?.[0]);
     }
-
     getXboxProfile();
-  }, [user]);
+  }, [user?.xbox_xuid]);
 
+  // Handlers
+  const connectSteam = () => { window.location.href = `${API}/connections/steam?token=${token}`; };
+  const connectXbox = () => { window.location.href = `${API}/connections/xbox?token=${token}`; };
+  const connectBattleNet = () => { window.location.href = `${API}/connections/battlenet?token=${token}`; };
 
-
-
-
-
-
-
-
-
-
-
-
-//Steam Connection
-  const connectSteam = () => {
-    window.location.href = `${API}/connections/steam?token=${token}`;
-  };
-
-
-  const connectXbox = () => {
-    window.location.href = `${API}/connections/xbox?token=${token}`;
-  };
-
-
-  const connectBattleNet = () => {
-    window.location.href = `${API}/connections/battlenet?token=${token}`;
-  };
-
-
-  if (error) return <p>{error}</p>;
-  if (!user) return <p>Loading profile...</p>;
-
-
-
-
-
-
-
+  if (error) return <p className="app-shell">{error}</p>;
+  if (!user) return <p className="app-shell">Loading profile...</p>;
 
   return (
     <main className="profile-page">
       <section className="profile-card">
         <h1 className="profile-title">Profile</h1>
-
-        <p>
-          <strong>Username:</strong> {user.username}
-        </p>
-
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-
+        <p><strong>Username:</strong> {user.username}</p>
+        <p><strong>Email:</strong> {user.email}</p>
         <hr />
 
-        {/* <h2>Connected Accounts</h2> */}
+        <h2 className="profile-section-title">My Active Sessions</h2>
+        <div className="profile-sessions">
+          {mySessions.length > 0 ? (
+            <div className="steam-games">
+              {mySessions.map((session) => (
+                <div key={session.session_id} className="steam-game">
+                  <div className="steam-game-info">
+                    <strong>{session.session_title}</strong>
+                    <div className="steam-game-meta">Status: {session.session_status}</div>
+                  </div>
+                  <button 
+                    className="profile-button" 
+                    style={{ width: 'auto', padding: '4px 12px' }}
+                    onClick={() => window.location.href = `/sessions/${session.session_id}`}
+                  >
+                    Enter Lobby
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="not-connected">You aren't in any active sessions.</p>
+          )}
+        </div>
 
-
+        <hr />
         <h2 className="profile-section-title">Connected Accounts</h2>
-
         <div className="profile-platforms">
           <div className="profile-platform">
             <h3>Battle.net</h3>
-            <button className="profile-button" onClick={connectBattleNet}>
-              Connect BNET
-            </button>
+            <button className="profile-button" onClick={connectBattleNet}>Connect BNET</button>
           </div>
-
           <div className="profile-platform">
             <h3>Xbox</h3>
-
-            {user.xbox_xuid ? (
-              <p className="connected">Connected ✅</p>
-            ) : (
+            {user.xbox_xuid ? <p className="connected">Connected ✅</p> : (
               <>
                 <p className="not-connected">Not connected</p>
-                <button className="profile-button" onClick={connectXbox}>
-                  Connect Xbox
-                </button>
+                <button className="profile-button" onClick={connectXbox}>Connect Xbox</button>
               </>
             )}
-
             {xboxProfile && (
               <div className="profile-subsection">
                 <p><strong>Gamertag:</strong> {xboxProfile.settings.find((s) => s.id === "Gamertag")?.value}</p>
-                <p><strong>Gamerscore:</strong> {xboxProfile.settings.find((s) => s.id === "Gamerscore")?.value}</p>
               </div>
             )}
           </div>
-
           <div className="profile-platform">
             <h3>Steam</h3>
-
-            {user.steam_id ? (
-              <p className="connected">Connected ✅</p>
-            ) : (
+            {user.steam_id ? <p className="connected">Connected ✅</p> : (
               <>
                 <p className="not-connected">Not connected</p>
-                <button className="profile-button" onClick={connectSteam}>
-                  Connect Steam
-                </button>
+                <button className="profile-button" onClick={connectSteam}>Connect Steam</button>
               </>
             )}
-
             {games.length > 0 && (
               <div className="profile-subsection">
                 <h4>Recent Games</h4>
-                {games.map((game) => (
-                  <p key={game.appid}>
-                    {game.name} — {Math.round(game.playtime_2weeks / 60)} hrs
-                  </p>
-                ))}
+                {games.map((g) => <p key={g.appid}>{g.name} — {Math.round(g.playtime_2weeks / 60)} hrs</p>)}
               </div>
             )}
           </div>
@@ -195,30 +171,23 @@ export default function Profile() {
         {mySteamGames.length > 0 && (
           <div className="steam-games">
             <h3>My Steam Games</h3>
-
             {mySteamGames.slice(0, 10).map((game) => (
               <div key={game.appid} className="steam-game">
-                
                 {game.img_icon_url && (
-                  <img
-                    className="steam-game-icon"
-                    src={`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
-                    alt={game.name}
+                  <img 
+                    className="steam-game-icon" 
+                    src={`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`} 
+                    alt={game.name} 
                   />
                 )}
-
                 <div className="steam-game-info">
                   <strong>{game.name}</strong>
-
-                  <div className="steam-game-meta">
-                    Total: {Math.round(game.playtime_forever / 60)} hrs
-                  </div>
+                  <div className="steam-game-meta">Total: {Math.round(game.playtime_forever / 60)} hrs</div>
                 </div>
-              )) : <p style={{color: '#888'}}>{user.psn_id ? "No games found. Check privacy settings." : "Connect PSN to see games"}</p>}
-            </div>
+              </div>
+            ))}
           </div>
-
-        </div>
+        )}
       </section>
     </main>
   );

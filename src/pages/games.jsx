@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
-import CreateSessionDialog from "./CreateSessionDialog"; // Added importimport "./games.css";
+import CreateSessionDialog from "./CreateSessionDialog";
+import "./games.css";
 
 const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
@@ -10,10 +11,9 @@ export default function Games() {
   const [games, setGames] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
-  const [activeGameForDialog, setActiveGameForDialog] = useState(null); // Added state
+  const [activeGameForDialog, setActiveGameForDialog] = useState(null);
 
   const syncGames = async () => {
-    // const response = await fetch(`${API}/games`);
     const response = await fetch(`${API}/games`);
     const data = await response.json();
     console.log(data);
@@ -70,9 +70,13 @@ export default function Games() {
           </div>
         </div>
       </div>
+
       <div className="games-results-bar">
-        <p className="games-results-bar__count">{filteredGames.length} games</p>
+        <p className="games-results-bar__count">
+          {filteredGames.length} games
+        </p>
       </div>
+
       <ul
         className={`games-catalog ${
           viewMode === "grid" ? "games-catalog--grid" : "games-catalog--list"
@@ -80,12 +84,11 @@ export default function Games() {
       >
         {filteredGames.map((game) => (
           <li className="games-catalog__item" key={game.game_id}>
-            <div className="game-card"> {/* Changed Link to div to allow button click inside */}
+            <div className="game-card">
               <Link to={`/games/${game.game_id}`}>
                 <div className="game-card__image-wrap">
                   <img
                     className="game-card__image"
-                    // src={game.image}
                     src={game.cover_image_url}
                     alt={game.game_title}
                   />
@@ -94,17 +97,21 @@ export default function Games() {
               <div className="game-card__body">
                 <div className="game-card__top-row">
                   <h2 className="game-card__title">{game.game_title}</h2>
-                  {/* Start Session Button */}
-                  <button 
-                    className="game-card__badge" 
-                    style={{ border: 'none', cursor: 'pointer' }}
-                    onClick={() => setActiveGameForDialog(game)}
+                  <button
+                    className="game-card__badge"
+                    style={{ border: "none", cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // FIXED: Capture mouse position to pass to the Dialog
+                      setActiveGameForDialog({
+                        ...game,
+                        clickX: e.clientX,
+                        clickY: e.clientY
+                      });
+                    }}
                   >
                     Start Session +
                   </button>
-                  {game.age_rating && (
-                    <span className="game-card__badge">{game.age_rating}</span>
-                  )}
                 </div>
                 <div className="game-card__meta">
                   {game.genre && (
@@ -115,9 +122,7 @@ export default function Games() {
                   )}
                 </div>
                 {game.game_description && (
-                  <p className="game-card__description">
-                    {game.game_description}
-                  </p>
+                  <p className="game-card__description">{game.game_description}</p>
                 )}
               </div>
             </div>
@@ -125,11 +130,10 @@ export default function Games() {
         ))}
       </ul>
 
-      {/* Dialog Rendering */}
       {activeGameForDialog && (
-        <CreateSessionDialog 
-          game={activeGameForDialog} 
-          onDismiss={() => setActiveGameForDialog(null)} 
+        <CreateSessionDialog
+          game={activeGameForDialog}
+          onDismiss={() => setActiveGameForDialog(null)}
         />
       )}
     </section>
