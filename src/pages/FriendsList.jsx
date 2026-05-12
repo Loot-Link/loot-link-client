@@ -74,7 +74,7 @@ export default function FriendsList(){
 
     const friendView = friends.map((friend) =>(
       <div key={friend.user_id} className="friend-card">
-        <p>{friend.username}</p>
+        <p><strong>{friend.username}</strong></p>
       </div>
     ));
 
@@ -83,7 +83,7 @@ export default function FriendsList(){
       console.log(user.id);
       return (
         <div key={req.user_id_1 + req.user_id_2} className="request-card">
-          <span>{req.friend_username}</span>
+          <span><strong>{req.friend_username}</strong></span>
           {isReceived ? (
             <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
           ) : (
