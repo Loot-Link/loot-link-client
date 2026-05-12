@@ -79,10 +79,9 @@ export default function FriendsList(){
     ));
 
     const requestsView = requests.map((req)=>{
-      const isReceived = Number(req.request_sender_id) !== Number(user.id);
-      console.log(user.id);
+      const isReceived = Number(req.sender_id) !== Number(user.id);
       return (
-        <div key={req.user_id_1 + req.user_id_2} className="request-card">
+        <div key={req.friend_id} className="request-card">
           <span><strong>{req.friend_username}</strong></span>
           {isReceived ? (
             <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
