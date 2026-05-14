@@ -40,13 +40,13 @@ export default function FriendsList(){
                     "Authorization": `Bearer ${token}`
                 }
             });
-            if(response.ok){
+            const data = await response.json();
+            if(!response.ok){
+               alert(data.message); //toastify eventually
+            }else{
                 const newRequest = await response.json();
                 console.log("Request sent");
                 alert("Friend request sent!"); //maybe toastify this later
-            }else{
-                const data = await response.json();
-                alert("Failed to send request.");
             }
     } catch (err) {
         console.log("Error sending request: ", err);
@@ -60,6 +60,10 @@ export default function FriendsList(){
                 "Authorization": `Bearer ${token}`
             }
         });
+        const data = await response.json();
+        if(!response.ok){
+          alert(data.message); //toastify
+        }
         if(response.ok){
             fetchFriends();
             fetchRequests();
