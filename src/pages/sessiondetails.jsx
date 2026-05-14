@@ -195,11 +195,8 @@ return (
             />
             <button onClick={handleSendMessage}>Send</button>
           </div>
-
         </div>
-
       </main>
-
     </div>
   </div>
 );
