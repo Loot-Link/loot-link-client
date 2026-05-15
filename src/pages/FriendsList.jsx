@@ -9,7 +9,7 @@ export default function FriendsList(){
     const [ requests, setRequests ] = useState([]);
     const [ view, setView ] = useState("friends");
     const [targetId, setTargetId] = useState("");
-
+    //Gets the list of friends from API
     const fetchFriends = async () =>{
         const response = await fetch(`${API}/friendslist`, 
             {
@@ -18,8 +18,7 @@ export default function FriendsList(){
         const data = await response.json();
         setFriends(data);
     }
-   
-
+    //Gets the list of pending requests from API
     const fetchRequests = async () =>{
         const response = await fetch(`${API}/friendslist/requests`,
             {
@@ -28,30 +27,30 @@ export default function FriendsList(){
         const data = await response.json();
         setRequests(data);
     }
-
-
+    //Handler function for button to send friend requests
     const handleSendRequest = async (username) =>{
     try {
-        const response = await fetch(`${API}/friendslist/request/${username}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            if(!response.ok){
-               alert(data.message); //toastify eventually
-            }else{
-                const newRequest = await response.json();
-                console.log("Request sent");
-                alert("Friend request sent!"); //maybe toastify this later
+      const response = await fetch(`${API}/friendslist/request/${username}`,
+        {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
             }
+        });
+        const data = await response.json();
+          if(!response.ok){
+            alert(data.message); //toastify eventually
+          }else{
+            console.log("Request sent");
+            alert("Friend request sent!"); //maybe toastify this later   
+          }
     } catch (err) {
         console.log("Error sending request: ", err);
     }
+    fetchRequests();
  }
+ //Handler function for button to Accept pending requests
  const handleAccept=async(senderId)=>{
     const response = await fetch(`${API}/friendslist/accept/${senderId}`,
         {
@@ -69,26 +68,50 @@ export default function FriendsList(){
             fetchRequests();
         }
     } 
+  //Handler function for button to deny pending requests
+  const handleDeny = async (senderId)=>{
+    const response = await fetch(`${API}/friendslist/deny/${senderId}`,
+        {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if(!response.ok){
+          alert(data.message); //toastify
+        }
+        if(response.ok){
+            fetchFriends();
+            fetchRequests();
+        }
+  }
     useEffect(()=>{
         if(token){
             fetchFriends();
             fetchRequests();
         }
     },[]);
-
-    const friendView = friends.map((friend) =>(
-      <div key={friend.user_id} className="friend-card">
-        <p><strong>{friend.username}</strong></p>
-      </div>
-    ));
-
+    //Varr to hold the html view of list of friends 
+    const friendView = friends.map((friend) =>{
+    return (
+        <div key={friend.user_id} className="friend-card">
+          <p><strong>{friend.username}</strong></p>
+          <button onClick={()=>handleDeny(friend.user_id)}>Remove friend</button>
+        </div>
+        );
+      });
+    //Var to hold html view of list of requests
     const requestsView = requests.map((req)=>{
       const isReceived = Number(req.sender_id) !== Number(user.id);
       return (
         <div key={req.friend_id} className="request-card">
           <span><strong>{req.friend_username}</strong></span>
-          {isReceived ? (
-            <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
+          {isReceived ? ( 
+            <div>
+              <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
+              <button onClick={()=>handleDeny(req.friend_id)}>Deny</button> 
+            </div>
           ) : (
             <span className="sent-request">-Pending</span>
           )}
