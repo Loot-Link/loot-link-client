@@ -177,6 +177,9 @@ export default function FriendsList(){
           <button onClick={() => setView("requests")} className={view === "requests" ? "active" : ""}>
             Pending ({requests.length})
           </button>
+          <button onClick={() => setView("blocked")} className={view === "blocked" ? "active" : ""}>
+            Blocked ({blocks.length})
+          </button>
         </div>
       </header>
 
