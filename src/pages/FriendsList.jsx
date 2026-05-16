@@ -29,7 +29,7 @@ export default function FriendsList(){
         setRequests(data);
     }
     const fetchBlocks = async ()=>{
-      const response = await fetch(`${API}/blocklist`,
+      const response = await fetch(`${API}/friendslist/blocklist`,
         {
           headers: { "Authorization": `Bearer ${token}`}
         });
@@ -98,7 +98,7 @@ export default function FriendsList(){
   //Need to figure out which is sender/receiver for this one *******************************************************
   //Handler function for button to block other users
   const handleBlock = async (receiverId)=>{
-    const response = await fetch(`${API}/blocklist/${receiverId}`,
+    const response = await fetch(`${API}/friendslist/blocklist/${receiverId}`,
       {
         method: "POST",
         headers: {
