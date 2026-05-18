@@ -40,7 +40,7 @@ export default function SessionDetails() {
   const syncSessionUsers = async () => {
     const response = await fetch(`${API}/sessions/${sessionId}/users`);
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
     setSessionUsers(data);
   };
 //Session Users Data - When to get the data
@@ -85,9 +85,15 @@ export default function SessionDetails() {
   await syncSessionMessages();
   // syncSessionMessages();
 };
-  
-console.log(user);
-console.log(sessionMessages);
+
+
+const currentUserId = user?.user_id ?? user?.id;
+console.log("logged in user", user);
+console.log("current user id", currentUserId);
+//console.log("message user ids", sessionMessages.map(msg => msg.user_id));
+//console.log(sessionMessages);
+
+
 return (
   <div className="session-details-page">
 
@@ -112,6 +118,10 @@ return (
         </p>
       </div>
     </div>
+
+
+
+
 
     <div className="session-content">
 
@@ -153,14 +163,16 @@ return (
         <div className="session-chat-container">
 
           <div className="session-chat-messages">
-            {sessionMessages.map((msg) => (
-              <div
-                key={msg.session_message_id}
-                className={`chat-message ${
-                  // msg.user_id === user?.id ? "own-message" : ""
-                  Number(msg.user_id) === Number(user?.user_id) ? "own-message" : ""
-                }`}
-              >
+            {user &&
+              sessionMessages.map((msg) => (
+                <div
+                  key={msg.session_message_id}
+                  className={`chat-message ${
+                    Number(msg.user_id) === Number(currentUserId) ? "own-message" : ""
+                  }`}
+                >
+
+
 
                 <div className="chat-message-avatar" />
 
