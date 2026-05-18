@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
+import "./FriendsList.css";
 
 const API = "http://localhost:3000/api";
 
@@ -142,8 +143,8 @@ export default function FriendsList(){
     return (
         <div key={friend.user_id} className="relation-card">
           <p><strong>{friend.username}</strong></p>
-          <button onClick={()=>handleDeny(friend.user_id)}>Remove friend</button>
-          <button onClick={()=>handleBlock(friend.user_id)}>Block User</button>
+          <button className="btn-deny" onClick={()=>handleDeny(friend.user_id)}>Remove friend</button>
+          <button className="btn-block" onClick={()=>handleBlock(friend.user_id)}>Block User</button>
         </div>
         );
       });
@@ -155,12 +156,12 @@ export default function FriendsList(){
           <span><strong>{req.friend_username}</strong></span>
           {isReceived ? ( 
             <div>
-              <button onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
-              <button onClick={()=>handleDeny(req.friend_id)}>Deny</button> 
-              <button onClick={()=>handleBlock(req.friend_id)}>Block User</button>
+              <button className="btn-accept" onClick={()=> handleAccept(req.friend_id)}>Accept</button> 
+              <button className="btn-deny" onClick={()=>handleDeny(req.friend_id)}>Deny</button> 
+              <button className="btn-block" onClick={()=>handleBlock(req.friend_id)}>Block User</button>
             </div>
           ) : (
-            <span className="sent-request">-Pending</span>
+            <span className="sent-request">Pending</span>
           )}
         </div>
       );
@@ -200,13 +201,14 @@ export default function FriendsList(){
         </div>
       </header>
 
-      <section className="friends-content">
+      <section className="friends-view">
         {views[view]}
       </section>
       <section>
         <h3>Add friend by Username</h3>
         <div className="add-friend">
           <input 
+            className="add-friend-input"
             type="text"
             placeholder="Enter Username..."
             value={targetId}
