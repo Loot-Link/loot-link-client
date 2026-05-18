@@ -95,12 +95,29 @@ export default function FriendsList(){
             fetchRequests();
         }
   }
-  //Need to figure out which is sender/receiver for this one *******************************************************
   //Handler function for button to block other users
   const handleBlock = async (receiverId)=>{
     const response = await fetch(`${API}/friendslist/blocklist/${receiverId}`,
       {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if(!response.ok){
+        alert(data.message);//toastify
+      }
+      if(response.ok){
+        fetchBlocks();
+      }
+  }
+  //Handler function for button to UN-block other users
+  const handleUnblock = async (receiverId)=>{
+    console.log("Unblock request received for user ID: ", receiverId);
+    const response = await fetch(`${API}/friendslist/blocklist/${receiverId}`,
+      {
+        method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -123,7 +140,7 @@ export default function FriendsList(){
     //Varr to hold the html view of list of friends 
     const friendView = friends.map((friend) =>{
     return (
-        <div key={friend.user_id} className="friend-card">
+        <div key={friend.user_id} className="relation-card">
           <p><strong>{friend.username}</strong></p>
           <button onClick={()=>handleDeny(friend.user_id)}>Remove friend</button>
           <button onClick={()=>handleBlock(friend.user_id)}>Block User</button>
@@ -134,7 +151,7 @@ export default function FriendsList(){
     const requestsView = requests.map((req)=>{
       const isReceived = Number(req.sender_id) !== Number(user.id);
       return (
-        <div key={req.friend_id} className="request-card">
+        <div key={req.friend_id} className="relation-card">
           <span><strong>{req.friend_username}</strong></span>
           {isReceived ? ( 
             <div>
@@ -151,9 +168,9 @@ export default function FriendsList(){
     //Var to hold html view of blocked users
     const blockedView = blocks.map((blocked)=>{
       return (
-        <div key={blocked.user_id} className="blocked-card">
+        <div key={blocked.user_id} className="relation-card">
           <p><strong>{blocked.username}</strong></p>
-          <button onClick={()=>handleBlock(blocked.user_id)}>Unblock -Broken-</button>
+          <button onClick={()=>handleUnblock(blocked.user_id)}>Unblock</button>
         </div>
       );
     });
