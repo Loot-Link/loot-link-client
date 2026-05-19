@@ -1,0 +1,124 @@
+.game-reviews-page {
+  padding: 24px;
+}
+
+.game-reviews-header {
+  margin-bottom: 32px;
+}
+
+.game-reviews-header h1 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.game-reviews-header input {
+  width: 320px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 16, 35, 0.9);
+  color: white;
+  font-size: 1rem;
+}
+
+.game-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.game-review-card {
+  display: flex;
+  gap: 24px;
+  height: 240px;
+  min-height: 240px;
+  background: rgba(12, 18, 40, 0.78);
+
+  border: 1px solid rgba(120, 140, 255, 0.18);
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.game-review-image {
+  width: 220px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-review-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.game-review-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 18px;
+}
+
+.game-review-title {
+  color: white;
+  font-size: 1.8rem;
+  margin-top:0;
+  margin-bottom: 6px;
+}
+
+.game-review-game-title {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.game-review-rating {
+  color: #ffd966;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.game-review-text {
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.2;
+
+  margin-bottom: 14px;
+}
+
+.game-review-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.6);
+
+  font-size: 0.95rem;
+}
+
+.game-review-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.game-review-card {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.game-review-link:hover .game-review-card {
+  transform: translateY(-4px);
+
+  border-color: rgba(120, 140, 255, 0.4);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.45);
+}

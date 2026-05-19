@@ -160,6 +160,7 @@ body {
   border: none;
   color: white;
   cursor: pointer;
+  
 }
 
 /* .auth-nav__button {
@@ -169,4 +170,5 @@ body {
 
 .logout-button {
   background: #1b233d;
+  margin-right: 18px;  
 }

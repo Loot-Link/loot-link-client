@@ -4,6 +4,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Layout from "./layout/Layout";
 import Games from "./pages/games";
+import GameReviews from "./pages/gamereviews";
+import GameReviewDetails from "./pages/gamereviewdetails";
 import Profile from "./pages/profile";
 import Sessions from "./pages/sessions";
 import SessionDetails from "./pages/sessiondetails";
@@ -18,7 +20,9 @@ export default function App() {
         <Route path="games" element={<Games />} /> 
         <Route path="profile" element={<Profile />} /> 
         <Route path="friends" element={<FriendsList />} />
-        <Route path="sessions" element={<Sessions />} /> 
+        <Route path="game-reviews" element={<GameReviews />} /> 
+        <Route path="/game-reviews/:id" element={<GameReviewDetails />} />
+        <Route path="sessions" element={<Sessions />} />         
         <Route path="/sessions/:sessionId" element={<SessionDetails />} />
         <Route path="register" element={<Register />} /> 
       </Route>
