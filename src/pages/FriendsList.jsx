@@ -111,6 +111,8 @@ export default function FriendsList(){
       }
       if(response.ok){
         fetchBlocks();
+        fetchFriends();
+        fetchRequests();
       }
   }
   //Handler function for button to UN-block other users
@@ -129,6 +131,8 @@ export default function FriendsList(){
       }
       if(response.ok){
         fetchBlocks();
+        fetchFriends();
+        fetchRequests();
       }
   }
     useEffect(()=>{
