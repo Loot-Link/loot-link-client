@@ -22,20 +22,23 @@ export default function Navbar() {
           </NavLink>
 
           <nav className="main-nav">
-            <NavLink to="/" className="main-nav__link">
+            {/* <NavLink to="/" className="main-nav__link">
               Home
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/sessions" className="main-nav__link">
-              My Sessions
+              Game Sessions
             </NavLink>
-            <NavLink to="/reviews" className="main-nav__link">
-              Reviews
+            <NavLink to="/game-reviews" className="main-nav__link">
+              Game Reviews
             </NavLink>
             <NavLink to="/games" className="main-nav__link">
               Games
             </NavLink>
             <NavLink to="/profile" className="main-nav__link">
               Profile
+            </NavLink>
+            <NavLink to="/friends" className="main-nav__link">
+              Friends
             </NavLink>
           </nav>
         </div>
