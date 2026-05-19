@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
-
-import "./sessions.css";
-//client/src/pages/Sessions.css
+import "./sessions.css"; //client/src/pages/Sessions.css
 
 const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
@@ -21,16 +19,19 @@ export default function Sessions() {
     setSessions(data);
   };
 
+  // FIXED: Wrapped in an async function to satisfy strict React linting rules
   useEffect(() => {
-    syncSessions();
+    const init = async () => {
+      await syncSessions();
+    };
+    init();
   }, []);
 
   const filteredSessions = sessions.filter((session) =>
     session.session_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
-return (
+  return (
     <section className="sessions-page">
       <div className="sessions-page__header">
         <div className="sessions-page__title-wrap">
@@ -39,7 +40,6 @@ return (
             Browse the catalog and start a session.
           </p>
         </div>
-
         <div className="sessions-page__controls">
           <label className="sessions-search">
             <span className="sessions-search__label">Search</span>
@@ -51,7 +51,6 @@ return (
               placeholder="Search sessions..."
             />
           </label>
-
           <div className="sessions-view-toggle">
             <button
               className={`sessions-view-toggle__button ${
@@ -62,7 +61,6 @@ return (
             >
               Grid
             </button>
-
             <button
               className={`sessions-view-toggle__button ${
                 viewMode === "list" ? "is-active" : ""
@@ -75,13 +73,11 @@ return (
           </div>
         </div>
       </div>
-
       <div className="sessions-results-bar">
         <p className="sessions-results-bar__count">
           {filteredSessions.length} sessions
         </p>
       </div>
-
       <ul
         className={`sessions-catalog ${
           viewMode === "grid" ? "sessions-catalog--grid" : "sessions-catalog--list"
@@ -98,7 +94,6 @@ return (
                   alt={session.session_title}
                 />
               </div>
-
               <div className="session-card__body">
                 <div className="session-card__top-row">
                   <h2 className="session-card__title">{session.session_title}</h2>
@@ -106,7 +101,6 @@ return (
                     <span className="session-card__badge">{session.age_rating}</span>
                   )}
                 </div>
-
                 <div className="session-card__meta">
                   {session.genre && (
                     <span className="session-card__meta-item">{session.genre}</span>
@@ -115,7 +109,6 @@ return (
                     <span className="session-card__meta-item">{session.category}</span>
                   )}
                 </div>
-
                 {session.session_description && (
                   <p className="session-card__description">
                     {session.session_description}
@@ -129,5 +122,3 @@ return (
     </section>
   );
 }
-
-
