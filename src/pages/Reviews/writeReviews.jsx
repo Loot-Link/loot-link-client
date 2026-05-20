@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "./reviews.css";
 
 const API = "http://localhost:3000/api";
 
@@ -14,6 +15,11 @@ export default function WriteReviews() {
     const [ratingValue, setRatingValue] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [games, setGames] = useState([]);
+    const [selectedGame, setSelectedGame] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [gamesLoading, setGamesLoading] = useState(false);
+    
 
     useEffect(() => {
         if (!token) {
@@ -21,10 +27,52 @@ export default function WriteReviews() {
         }
     }, [token, navigate]);
 
+    useEffect(() => {
+        const fetchGames = async () => {
+            setGamesLoading(true);
+            try {
+                const response = await fetch(`${API}/games`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setGames(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch games:", err);
+            } finally {
+                setGamesLoading(false);
+            }
+        };
+
+        if (token) {
+            fetchGames();
+        }
+    }, [token]);
+
+    const filteredGames = games.filter(game =>
+        game.game_title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleGameSelect = (game) => {
+        setSelectedGame(game);
+        setGameId(game.game_id);
+        setSearchTerm('');
+        setShowDropdown(false);
+    };
+
     const handleSubmitReview = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError("");
+
+        if (!gameId) {
+            setError("Please select a game");
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch(`${API}/game-reviews`, {
@@ -34,17 +82,15 @@ export default function WriteReviews() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    reviewTitle: reviewTitle,
-                    gameReview: gameReview,
-                    gameId: 3,
-                    ratingValue: ratingValue,
-                    userId: user?.id,
+                    reviewTitle,
+                    gameReview,
+                    gameId,
+                    ratingValue,
+                    userId: user.id
                 }),
             });
-console.log(response);
             if (!response.ok) {
                 throw new Error("Failed to post review");
-                
             }
 
             const data = await response.json();
@@ -85,14 +131,46 @@ console.log(response);
                 <label>
                     Which Game Would You Like to Review?
                     <span className="games-search__label">Search</span>
-                    <input
-                        className="games-search__input"
-                        id='game-to-review'
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search games..."
-                    />
+                    <div className="games-search__container">
+                        <input
+                            className="games-search__input"
+                            id='game-to-review'
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setShowDropdown(true);
+                            }}
+                            onFocus={() => setShowDropdown(true)}
+                            placeholder="Search games..."
+                            autoComplete="off"
+                        />
+                        {showDropdown && searchTerm && filteredGames.length > 0 && (
+                            <ul className="games-search__dropdown">
+                                {filteredGames.map((game) => (
+                                    <li
+                                        key={game.id}
+                                        className="games-search__dropdown-item"
+                                        onClick={() => handleGameSelect(game)}
+                                    >
+                                        {game.game_title}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    {selectedGame && (
+                        <div className="selected-game-tile">
+                            <img
+                            src={selectedGame.cover_image_url}
+                            alt={selectedGame.game_title}
+                            className="selected-game-tile__image"
+                            />
+                            <div className="selected-game-tile__info">
+                                <h3>{selectedGame.game_title}</h3>
+                            </div>
+                        </div>
+                    )}
                 </label>
                 <fieldset>
                     <legend>Rating</legend>
