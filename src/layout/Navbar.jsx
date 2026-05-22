@@ -26,10 +26,10 @@ export default function Navbar() {
               Home
             </NavLink>
             <NavLink to="/sessions" className="main-nav__link">
-              My Sessions
+              Game Sessions
             </NavLink>
-            <NavLink to="/reviews" className="main-nav__link">
-              Reviews
+            <NavLink to="/game-reviews" className="main-nav__link">
+              Game Reviews
             </NavLink>
             <NavLink to="/games" className="main-nav__link">
               Games
