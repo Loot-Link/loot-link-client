@@ -74,6 +74,12 @@ export default function WriteReviews() {
             return;
         }
 
+        if (!ratingValue) {
+            setError("Please select a rating");
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(`${API}/game-reviews`, {
                 method: "POST",
@@ -85,8 +91,7 @@ export default function WriteReviews() {
                     reviewTitle,
                     gameReview,
                     gameId,
-                    ratingValue,
-                    userId: user.id
+                    ratingValue
                 }),
             });
             if (!response.ok) {
@@ -174,26 +179,20 @@ export default function WriteReviews() {
                     <div className="review-row">
                       <fieldset>
                           <legend>Rating</legend>
-                          <div>
-                              <input
-                                  type="radio"
-                                  id="rating1"
-                                  name="valueRating"
-                                  value="recommend"
-                                  checked={ratingValue === "recommend"}
-                                  onChange={(e) => setRatingValue(e.target.value)}
-                              />
-                              <label htmlFor="rating1">Recommend</label>
-
-                              <input
-                                  type="radio"
-                                  id="rating2"
-                                  name="valueRating"
-                                  value="doNotRecommend"
-                                  checked={ratingValue === "doNotRecommend"}
-                                  onChange={(e) => setRatingValue(e.target.value)}
-                              />
-                              <label htmlFor="rating2">Do Not Recommend</label>
+                          <div className="star-rating">
+                              {[1, 2, 3, 4, 5].map((value) => (
+                                  <label key={value} className="star-rating__label" htmlFor={`rating${value}`}>
+                                      <input
+                                          type="radio"
+                                          id={`rating${value}`}
+                                          name="valueRating"
+                                          value={value}
+                                          checked={ratingValue === value}
+                                          onChange={(e) => setRatingValue(Number(e.target.value))}
+                                      />
+                                      <span className="star-rating__stars">{'★'.repeat(value)}{'☆'.repeat(5 - value)}</span>
+                                  </label>
+                              ))}
                           </div>
                       </fieldset>
                       <div className="review-actions">
