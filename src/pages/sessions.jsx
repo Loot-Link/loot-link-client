@@ -10,6 +10,7 @@ export default function Sessions() {
   const [sessions, setSessions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
+  const { user } = useAuth();
 
   const syncSessions = async () => {
     // const response = await fetch(`${API}/sessions`);
@@ -30,6 +31,8 @@ export default function Sessions() {
   const filteredSessions = sessions.filter((session) =>
     session.session_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const currentUserId = user?.user_id ?? user?.id;
 
   return (
     <section className="sessions-page">
@@ -83,41 +86,79 @@ export default function Sessions() {
           viewMode === "grid" ? "sessions-catalog--grid" : "sessions-catalog--list"
         }`}
       >
-        {filteredSessions.map((session) => (
-          <li className="sessions-catalog__item" key={session.session_id}>
-            <Link to={`/sessions/${session.session_id}`} className="session-card">
-              <div className="session-card__image-wrap">
-                <img
-                  className="session-card__image"
-                  // src={session.image}
-                  src={session.cover_image_url}
-                  alt={session.session_title}
-                />
-              </div>
-              <div className="session-card__body">
-                <div className="session-card__top-row">
-                  <h2 className="session-card__title">{session.session_title}</h2>
-                  {session.age_rating && (
-                    <span className="session-card__badge">{session.age_rating}</span>
+        {filteredSessions.map((session) => {
+          const isLobbyHost = Number(session.host_user_id) === Number(currentUserId);
+          const isLobbyLocked = session.session_status === 'locked';
+          
+          // NEW INTEGRATION MAPPING: Compares counting aggregates against slot cap settings
+          const isLobbyFull = Number(session.current_user_count) >= Number(session.max_users);
+
+          return (
+            <li className="sessions-catalog__item" key={session.session_id}>
+              <Link 
+                to={`/sessions/${session.session_id}`} 
+                className="session-card" 
+                style={{ 
+                  position: 'relative',
+                  // Prevent entering a filled session unless you already belong to the host squad
+                  pointerEvents: (isLobbyFull && !isLobbyHost) ? 'none' : 'auto',
+                  cursor: (isLobbyFull && !isLobbyHost) ? 'not-allowed' : 'pointer'
+                }}
+              >
+                
+                {/* Visual Ribbon Badges Overlay Layer (Updated) */}
+                <div className="session-badge-container">
+                  {isLobbyHost && (
+                    <span className="badge-status--host">Lobby Host 👑</span>
+                  )}
+                  {isLobbyLocked && (
+                    <span className="badge-status--locked">Lobby Locked 🔒</span>
+                  )}
+                  {/* Shows gold "Squad Full" badge when limits are crossed */}
+                  {!isLobbyHost && !isLobbyLocked && isLobbyFull && (
+                    <span className="badge-status--full">Squad Full 🚫</span>
                   )}
                 </div>
-                <div className="session-card__meta">
-                  {session.genre && (
-                    <span className="session-card__meta-item">{session.genre}</span>
-                  )}
-                  {session.category && (
-                    <span className="session-card__meta-item">{session.category}</span>
+
+                {/* Dims visual covers subtly when filled or frozen to signal block */}
+                <div className="session-card__image-wrap" style={{ opacity: (isLobbyLocked || isLobbyFull) ? 0.5 : 1 }}>
+                  <img
+                    className="session-card__image"
+                    // src={session.image}
+                    src={session.cover_image_url}
+                    alt={session.session_title}
+                  />
+                </div>
+                <div className="session-card__body" style={{ opacity: (isLobbyLocked || isLobbyFull) ? 0.6 : 1 }}>
+                  <div className="session-card__top-row">
+                    <h2 className="session-card__title">{session.session_title}</h2>
+                    
+                    {/* Render a sleek fraction headcount micro-badge right inside the card row */}
+                    <span 
+                      className="session-card__badge" 
+                      style={{ background: isLobbyFull ? '#d87a13' : '#1e45b3', transition: 'background-color 0.2s' }}
+                    >
+                      {session.current_user_count || 1}/{session.max_users || 4}
+                    </span>
+                  </div>
+                  <div className="session-card__meta">
+                    {session.genre && (
+                      <span className="session-card__meta-item">{session.genre}</span>
+                    )}
+                    {session.category && (
+                      <span className="session-card__meta-item">{session.category}</span>
+                    )}
+                  </div>
+                  {session.session_description && (
+                    <p className="session-card__description">
+                      {session.session_description}
+                    </p>
                   )}
                 </div>
-                {session.session_description && (
-                  <p className="session-card__description">
-                    {session.session_description}
-                  </p>
-                )}
-              </div>
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

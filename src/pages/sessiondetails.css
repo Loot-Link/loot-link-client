@@ -1,20 +1,22 @@
 .session-details-page {
-  padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
+  padding: 20px;
 }
 
 .session-hero {
   position: relative;
+  margin-bottom: 20px;
   border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 20px;
 }
+
 .host-badge {
   margin-left: 8px;
   font-size: 12px;
   opacity: 0.8;
 }
+
 .session-hero-image {
   width: 100%;
   height: 260px;
@@ -45,19 +47,19 @@
 }
 
 .session-users-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .session-main-panel {
-  min-width: 0;
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-width: 0;
 }
 
 .session-user-card {
@@ -67,49 +69,39 @@
   border-radius: 8px;
 }
 
-
 /* session chat container */
 .session-chat-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 600px; /* try 500–600px */
   margin-top: 1.5rem;
   padding: 1.25rem;
   background: rgba(8, 14, 28, 0.82);
   border: 1px solid rgba(120, 140, 255, 0.14);
   border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  height: 600px; /* try 500–600px */
-
-  position: relative;
 }
 
 .session-chat-container::after {
   content: "";
   position: absolute;
+  right: 0;
   bottom: 70px; /* just above input */
   left: 0;
-  right: 0;
   height: 40px;
-
+  background: linear-gradient(to bottom, rgba(8, 14, 28, 0) 0%, rgba(8, 14, 28, 0.9) 100%);
   pointer-events: none;
-
-  background: linear-gradient(
-    to bottom,
-    rgba(8, 14, 28, 0) 0%,
-    rgba(8, 14, 28, 0.9) 100%
-  );
 }
 
 .session-chat-messages {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 1rem;
-
   height: 100%;
-  flex: 1;
-  overflow-y: auto;
-
   padding-right: 6px;
   padding-bottom: 12px;
+  overflow-y: auto;
 }
 
 .chat-message {
@@ -117,6 +109,7 @@
   gap: 0.75rem;
   align-items: flex-start;
 }
+
 .session-chat-messages::-webkit-scrollbar {
   width: 6px;
 }
@@ -127,11 +120,11 @@
 }
 
 .chat-message-avatar {
+  flex-shrink: 0;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  flex-shrink: 0;
+  border-radius: 50%;
 }
 
 .chat-message-header {
@@ -141,13 +134,13 @@
 }
 
 .chat-username {
-  font-weight: 700;
   color: #f8fafc;
+  font-weight: 700;
 }
 
 .chat-time {
-  font-size: 0.8rem;
   color: #8b95aa;
+  font-size: 0.8rem;
 }
 
 .chat-message-text {
@@ -158,9 +151,11 @@
 .session-chat-input {
   display: flex;
   gap: 0.5rem;
-  border-top: 1px solid rgba(120, 140, 255, 0.12);
+  margin-top: 0;
   padding-top: 1rem;
+  border-top: 1px solid rgba(120, 140, 255, 0.12);
 }
+
 .own-message {
   justify-content: flex-end;
 }
@@ -174,15 +169,14 @@
   justify-content: flex-end;
 }
 
-
 /* session chat input */
 .session-chat-input input {
   flex: 1;
   padding: 0.7rem 0.9rem;
-  border-radius: 10px;
-  border: 1px solid rgba(120, 140, 255, 0.18);
   background: rgba(12, 18, 34, 0.9);
   color: #e6ebff;
+  border: 1px solid rgba(120, 140, 255, 0.18);
+  border-radius: 10px;
   outline: none;
 }
 
@@ -192,11 +186,11 @@
 
 .session-chat-input button {
   padding: 0 1.2rem;
-  border-radius: 10px;
-  border: none;
   background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
   font-weight: 600;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
   transition: 0.2s ease;
 }
@@ -207,14 +201,461 @@
 
 /* session messages */
 .chat-message-content {
+  max-width: 70%;
+  padding: 0.6rem 0.9rem;
   background: rgba(18, 26, 48, 0.9);
   border: 1px solid rgba(120, 140, 255, 0.12);
-  padding: 0.6rem 0.9rem;
   border-radius: 12px;
-  max-width: 70%;
 }
 
 .chat-message-text {
   margin-top: 0.25rem;
   line-height: 1.35;
+}
+
+/* Discord Voice Widget Container */
+.discord-widget {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(114, 137, 218, 0.05) 100%);
+  border: 1px solid rgba(88, 101, 242, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(88, 101, 242, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Text Wrapping Columns */
+.discord-widget__text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Top Small Heading */
+.discord-widget__label {
+  color: #5865f2;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Subtext description */
+.discord-widget__description {
+  color: #b6bdd8;
+  font-size: 0.95rem;
+}
+
+/* Interactive Brand Button */
+.discord-widget__button {
+  width: auto;
+  margin: 0;
+  padding: 10px 20px;
+  color: #ffffff;
+  background: #5865f2;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Clean Hover State directly in CSS */
+.discord-widget__button:hover {
+  background-color: #4752c4;
+}
+
+/* Tiny click feedback animation */
+.discord-widget__button:active {
+  transform: scale(0.98);
+}
+
+/* Close/Delete Session Action Button */
+.session-delete-button {
+  width: auto;
+  margin: 0;
+  padding: 6px 14px;
+  color: #ffffff;
+  background: #ff4a4a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(255, 74, 74, 0.2);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-delete-button:hover {
+  background-color: #e03b3b;
+}
+
+.session-delete-button:active {
+  transform: scale(0.97);
+}
+
+/* Leave Session Button Style */
+.session-leave-button {
+  background: #f5a623; /* Warning Orange to distinguish from Close Session Red */
+  color: #ffffff;
+  width: auto; 
+  margin: 0; 
+  padding: 6px 14px; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-leave-button:hover {
+  background-color: #d88b13;
+}
+
+.session-leave-button:active {
+  transform: scale(0.97);
+}
+
+/* Copy Invite Link Action Selector */
+.session-invite-button {
+  background: #5f6fff; 
+  color: #ffffff;
+  width: auto; 
+  margin: 0; 
+  padding: 6px 14px; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 111, 255, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-invite-button:hover {
+  background-color: #4752c4;
+}
+
+.session-invite-button:active {
+  transform: scale(0.97);
+}
+
+/* Catalog Ribbon Overlay Wrappers */
+.session-badge-container {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+/* Host Ribbon Styling */
+.badge-status--host {
+  background: linear-gradient(135deg, #ff4a4a 0%, #b31c1c 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(255, 74, 74, 0.3);
+}
+
+/* Joined Member Ribbon Styling */
+.badge-status--joined {
+  background: linear-gradient(135deg, #4f7cff 0%, #1e45b3 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(79, 124, 255, 0.3);
+}
+
+/* Copy Invite Link Action Selector */
+.session-invite-button {
+  background: #5f6fff; 
+  color: #ffffff;
+  width: auto; 
+  margin: 0; 
+  padding: 6px 14px; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(95, 111, 255, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-invite-button:hover {
+  background-color: #4752c4;
+}
+
+.session-invite-button:active {
+  transform: scale(0.97);
+}
+
+/* Discord Voice Widget Styles */
+.discord-widget {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(114, 137, 218, 0.05) 100%);
+  border: 1px solid rgba(88, 101, 242, 0.4);
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 32px 0 rgba(88, 101, 242, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.discord-widget__text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.discord-widget__label {
+  color: #5865F2;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.discord-widget__description {
+  color: #b6bdd8;
+  font-size: 0.95rem;
+}
+
+.discord-widget__button {
+  background: #5865F2;
+  color: #ffffff;
+  width: auto;
+  margin: 0;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: none;
+}
+
+.discord-widget__button:hover {
+  background-color: #4752C4;
+}
+
+.discord-widget__button:active {
+  transform: scale(0.98);
+}
+
+/* Close/Delete Session Action Button */
+.session-delete-button {
+  background: #ff4a4a; 
+  color: #ffffff;
+  width: auto; 
+  margin: 0; 
+  padding: 6px 14px; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(255, 74, 74, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-delete-button:hover {
+  background-color: #e03b3b;
+}
+
+.session-delete-button:active {
+  transform: scale(0.97);
+}
+
+/* Leave Session Button Style */
+.session-leave-button {
+  background: #f5a623; 
+  color: #ffffff;
+  width: auto; 
+  margin: 0; 
+  padding: 6px 14px; 
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(245, 166, 35, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.session-leave-button:hover {
+  background-color: #d88b13;
+}
+
+.session-leave-button:active {
+  transform: scale(0.97);
+}
+
+/* Catalog Overlapping Ribbon Badges Layout selectors */
+.session-badge-container {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.badge-status--host {
+  background: linear-gradient(135deg, #ff4a4a 0%, #b31c1c 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(255, 74, 74, 0.3);
+}
+
+.badge-status--joined {
+  background: linear-gradient(135deg, #4f7cff 0%, #1e45b3 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(79, 124, 255, 0.3);
+}
+/* Host Management Controls Panel */
+.host-settings-bar {
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.host-settings__group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.host-settings__label {
+  color: #b6bdd8;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.host-settings__select {
+  background: #090e20;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+/* Toggle Switch Lock Button */
+.host-settings__lock-btn {
+  background: #1e45b3;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.host-settings__lock-btn--locked {
+  background: #ffaa00;
+  color: #000000;
+}
+
+/* Catalog Block Ribbon */
+.badge-status--locked {
+  background: linear-gradient(135deg, #707070 0%, #3a3a3a 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Catalog Full Squad Overlay Ribbon */
+.badge-status--full {
+  background: linear-gradient(135deg, #f5a623 0%, #d87a13 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(245, 166, 35, 0.3);
+}
+
+/* Interactive Join Squad Button */
+.session-join-button {
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+  color: #ffffff;
+  width: auto;
+  margin: 0;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.session-join-button:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px rgba(0, 114, 255, 0.4);
+}
+
+.session-join-button:active {
+  transform: scale(0.97);
+}
+
+/* Sidebar Viewer Badge counter */
+.viewer-count-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: #a5b4fc;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 8px;
 }

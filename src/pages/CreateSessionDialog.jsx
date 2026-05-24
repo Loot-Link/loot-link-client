@@ -21,6 +21,8 @@ export default function CreateSessionDialog({ game, onDismiss }) {
           game_id: game.game_id,
           session_title: formData.get("session_title"),
           max_users: Number(formData.get("max_users")) || 4,
+          // Merged Checkbox Parsing: native form entries evaluate checkboxes as "on" if clicked
+          is_private: formData.get("is_private") === "on",
         }),
       });
 
@@ -37,8 +39,8 @@ export default function CreateSessionDialog({ game, onDismiss }) {
   };
 
   // Dimensions for clamping
-  const boxHeight = 320;
-  
+  const boxHeight = 360; // Slightly increased height to accommodate the new toggle element safely
+
   // FIXED: safeY now uses the click position relative to the SCREEN window
   const safeY = Math.min(
     Math.max(game.clickY, boxHeight / 2 + 20),
@@ -69,10 +71,10 @@ export default function CreateSessionDialog({ game, onDismiss }) {
         className="auth-card"
         onClick={(e) => e.stopPropagation()}
         style={{
-          position: "fixed",   // CRITICAL: Makes the box follow your screen view, not the page top
-          top: `${safeY}px`,   // Level with your click
-          left: "50%",         // Horizontally centered
-          transform: "translate(-50%, -50%)", 
+          position: "fixed", // CRITICAL: Makes the box follow your screen view, not the page top
+          top: `${safeY}px`, // Level with your click
+          left: "50%", // Horizontally centered
+          transform: "translate(-50%, -50%)",
           margin: 0,
           background: "#1a1f35",
           border: "2px solid #4f7cff",
@@ -82,7 +84,15 @@ export default function CreateSessionDialog({ game, onDismiss }) {
           padding: "24px",
         }}
       >
-        <h2 className="auth-title" style={{ color: "#fff", textAlign: "center", fontSize: "1.2rem", marginBottom: "20px" }}>
+        <h2
+          className="auth-title"
+          style={{
+            color: "#fff",
+            textAlign: "center",
+            fontSize: "1.2rem",
+            marginBottom: "20px",
+          }}
+        >
           Host {game.game_title}
         </h2>
         <form className="auth-form" action={handleLaunch} style={{ gap: "15px" }}>
@@ -106,7 +116,21 @@ export default function CreateSessionDialog({ game, onDismiss }) {
               style={{ background: "#090e20", color: "#fff", height: "40px" }}
             />
           </label>
-          <button className="auth-button" style={{ marginTop: "5px", height: "44px" }}>
+
+          {/* Merged Interactive Private Toggle Element */}
+          <label className="auth-label" style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginTop: '5px', userSelect: 'none' }}>
+            <input 
+              type="checkbox" 
+              name="is_private" 
+              style={{ width: '18px', height: '18px', margin: 0, cursor: 'pointer', accentColor: '#4f7cff' }} 
+            />
+            <span style={{ color: '#fff', fontSize: '0.9rem' }}>Private (Invite Only)</span>
+          </label>
+
+          <button
+            className="auth-button"
+            style={{ marginTop: "5px", height: "44px" }}
+          >
             Launch Session
           </button>
           <button
@@ -118,11 +142,12 @@ export default function CreateSessionDialog({ game, onDismiss }) {
               color: "#9aa3c7",
               width: "100%",
               cursor: "pointer",
-              fontSize: "0.9rem"
+              fontSize: "0.9rem",
             }}
           >
             Cancel
           </button>
+          {error && <p className="auth-error" style={{ textAlign: 'center', color: '#ff4a4a', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
         </form>
       </div>
     </div>
