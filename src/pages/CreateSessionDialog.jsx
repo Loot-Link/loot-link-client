@@ -18,25 +18,27 @@ export default function CreateSessionDialog({ game, onDismiss }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          game_id: game.game_id,
-          session_title: formData.get("session_title"),
-          max_users: Number(formData.get("max_users")) || 4,
-          // Merged Checkbox Parsing: native form entries evaluate checkboxes as "on" if clicked
-          is_private: formData.get("is_private") === "on",
-        }),
-      });
+        game_id: game.game_id,
+        session_title: formData.get("session_title"),
+        max_users: Number(formData.get("max_users")),
+        is_private: formData.get("is_private") === "on",
+        matchmaking_enabled: formData.get("matchmaking_enabled") === "on",
+        playstyle: formData.get("playstyle") || "Casual"
+      }), 
+    }); 
 
-      if (!res.ok) {
-        const result = await res.json();
-        throw Error(result.message || "Failed to launch session");
-      }
-
-      const newSession = await res.json();
-      navigate(`/sessions/${newSession.session_id}`);
-    } catch (err) {
-      setError(err.message);
+    if (!res.ok) {
+      const result = await res.json();
+      throw Error(result.message || "Failed to launch session");
     }
-  };
+
+    const newSession = await res.json();
+    navigate(`/sessions/${newSession.session_id}`);
+    
+  } catch (err) { // Line 36: Catches everything safely from the ENTIRE sequence above
+    setError(err.message);
+  }
+};
 
   // Dimensions for clamping
   const boxHeight = 360; // Slightly increased height to accommodate the new toggle element safely
@@ -115,6 +117,16 @@ export default function CreateSessionDialog({ game, onDismiss }) {
               defaultValue="4"
               style={{ background: "#090e20", color: "#fff", height: "40px" }}
             />
+          </label>
+          {/* NEW PLAYSTYLE SELECTOR DROPDOWN MODULE */}
+          <label className="auth-label">
+            <span style={{ color: "#fff" }}>Lobby Playstyle</span>
+            <select name="playstyle" className="auth-input" style={{ background: "#090e20", color: "#fff", height: "40px", width: "100%", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", padding: "0 10px" }}>
+              <option value="Casual">Casual ☕</option>
+              <option value="Competitive">Competitive 🔥</option>
+              <option value="Speedrun">Speedrun ⏱️</option>
+              <option value="Achievements">Achievements 🏆</option>
+            </select>
           </label>
 
           {/* Merged Interactive Private Toggle Element */}

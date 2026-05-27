@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./sessions.css"; //client/src/pages/Sessions.css
 
 const API = "http://localhost:3000/api";
@@ -10,7 +10,8 @@ export default function Sessions() {
   const [sessions, setSessions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
-  const { user } = useAuth();
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
 
   const syncSessions = async () => {
     // const response = await fetch(`${API}/sessions`);
@@ -19,6 +20,30 @@ export default function Sessions() {
     console.log(data);
     setSessions(data);
   };
+    // Handle Automatic Search Engine Routing
+  const handleTriggerAutoMatchmaking = async () => {
+    try {
+      const res = await fetch(`${API}/sessions/matchmaking/auto-fill`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Leverages your existing global Auth context tokens
+        },
+      });
+
+      if (!res.ok) {
+        const errorNotice = await res.text();
+        alert(errorNotice); // Gracefully handles showing "No open matchmaking queues found"
+        return;
+      }
+
+      const match = await res.json();
+      alert("🎯 Squad Found! Transporting your operator to lobby communications...");
+      navigate(`/sessions/${match.session_id}`); // Bounces them instantly to the target room details
+    } catch (err) {
+      console.error("Matchmaking routing failure:", err);
+    }
+  };
+
 
   // FIXED: Wrapped in an async function to satisfy strict React linting rules
   useEffect(() => {
@@ -54,6 +79,16 @@ export default function Sessions() {
               placeholder="Search sessions..."
             />
           </label>
+  
+          {/* NEW GLOWING AUTOMATIC MATCHMAKING TRIGGER LINK (Added) */}
+          <button 
+            type="button" 
+            className="global-matchmaking-btn" 
+            onClick={handleTriggerAutoMatchmaking}
+          >
+            Find a Match 🎲
+          </button>
+
           <div className="sessions-view-toggle">
             <button
               className={`sessions-view-toggle__button ${
@@ -147,6 +182,11 @@ export default function Sessions() {
                     )}
                     {session.category && (
                       <span className="session-card__meta-item">{session.category}</span>
+                    )}
+  
+                    {/* NEW GLOWING PLAYSTYLE CUSTOM METADATA TAG (Added) */}
+                    {session.playstyle && (
+                      <span className="session-card__playstyle">{session.playstyle}</span>
                     )}
                   </div>
                   {session.session_description && (

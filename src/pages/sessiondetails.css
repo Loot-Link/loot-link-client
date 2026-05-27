@@ -659,3 +659,98 @@
   font-weight: bold;
   margin-left: 8px;
 }
+
+/* Ready Check Interface Elements */
+.ready-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+.ready-badge--true {
+  background: #2ec4b6;
+  color: #000000;
+}
+.ready-badge--false {
+  background: #ff4a4a;
+  color: #ffffff;
+}
+
+/* Big Action Button for Ready status */
+.session-ready-button {
+  background: linear-gradient(135deg, #2ec4b6 0%, #0f9f90 100%);
+  color: #ffffff;
+  width: auto;
+  margin: 0;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgba(46, 196, 182, 0.3);
+  transition: all 0.2s ease;
+}
+.session-ready-button--unready {
+  background: linear-gradient(135deg, #ff4a4a 0%, #b31c1c 100%);
+  box-shadow: 0 4px 12px rgba(255, 74, 74, 0.3);
+}
+
+/* Blinking Countdown Notification */
+.countdown-banner {
+  background: rgba(255, 170, 0, 0.15);
+  border: 2px dashed #ffaa00;
+  color: #ffaa00;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+/* Premium Matchmaking Live Toggle Switch Layout */
+.host-settings__toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #9aa3c7;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Glowing Pulse States when Matchmaking Intake is Active */
+.host-settings__toggle-btn--active {
+  background: linear-gradient(135deg, #a04fff 0%, #681eb3 100%);
+  color: #ffffff;
+  border: 1px solid rgba(160, 79, 255, 0.4);
+  box-shadow: 0 0 15px rgba(160, 79, 255, 0.4);
+  animation: queuePulse 1.5s infinite alternate;
+}
+
+@keyframes queuePulse {
+  from { box-shadow: 0 0 10px rgba(160, 79, 255, 0.2); }
+  to { box-shadow: 0 0 20px rgba(160, 79, 255, 0.5); }
+}
+
+/* Neon Catalog Ribbon Indicator Badge */
+.badge-status--queue {
+  background: linear-gradient(135deg, #a04fff 0%, #681eb3 100%);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(160, 79, 255, 0.3);
+}
