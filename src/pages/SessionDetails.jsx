@@ -274,8 +274,17 @@ export default function SessionDetails() {
   const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
 
   const hasDiscordLink = session.session_description?.includes("[DISCORD_LINK]:");
-  const displayDescription = hasDiscordLink ? session.session_description.split("\n\n[DISCORD_LINK]:") : session.session_description;
-  const discordUrl = hasDiscordLink ? session.session_description.split("\n\n[DISCORD_LINK]:") : null;
+  const displayDescription = hasDiscordLink
+    ? session.session_description.split("\n\n[DISCORD_LINK]:")[0]
+    : session.session_description;
+  let discordUrl = null;
+  if (hasDiscordLink) {
+    const rawUrlPart = session.session_description.split("\n\n[DISCORD_LINK]:")[1] || "";
+    const urlStartIndex = rawUrlPart.indexOf("https://");
+    if (urlStartIndex !== -1) {
+      discordUrl = rawUrlPart.substring(urlStartIndex).trim();
+    }
+  }
 
     return (
     <div className="session-details-page">

@@ -191,9 +191,11 @@ export default function Sessions() {
                   </div>
                   {session.session_description && (
                     <p className="session-card__description">
-                      {session.session_description}
+                      {session.session_description.includes("[DISCORD_LINK]:")
+                        ? session.session_description.split("\n\n[DISCORD_LINK]:")[0]   
+                        : session.session_description}
                     </p>
-                  )}
+                )}
                 </div>
               </Link>
             </li>
