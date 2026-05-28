@@ -22,8 +22,9 @@ export default function App() {
         <Route path="games" element={<Games />} /> 
         <Route path="profile" element={<Profile />} /> 
         <Route path="sessions" element={<Sessions />} /> 
-        <Route path='reviews' element={<GameReviews />} />
+        <Route path='game-reviews' element={<GameReviews />} />
         <Route path="writeReviews" element={<WriteReviews />} />
+        <Route path="game-reviews/:id" element={<GameReviewDetails />} />
         <Route path="/sessions/:sessionId" element={<SessionDetails />} />
         <Route path="register" element={<Register />} /> 
       </Route>

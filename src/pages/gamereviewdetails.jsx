@@ -13,16 +13,31 @@ export default function GameReviewDetails() {
   const { id } = useParams();
 
   const syncGameReviews = async () => {
-    // const response = await fetch(`${API}/games`);
-    const response = await fetch(`${API}/game-reviews/${id}`);
-    const data = await response.json();
-    console.log(data);
-    setGameReviews(data);
+    // Guard against undefined id
+    if (!id) {
+      console.warn('Review ID is not available yet');
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API}/game-reviews/${id}`);
+      
+      // Check if response is ok before parsing
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(data);
+      setGameReviews(data);
+    } catch (error) {
+      console.error('Error fetching game review:', error);
+    }
   };
 
   useEffect(() => {
     syncGameReviews();
-  }, []);
+  }, [id]); // Add id as dependency
 
 
 

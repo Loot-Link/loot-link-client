@@ -99,7 +99,7 @@ export default function WriteReviews() {
             }
 
             const data = await response.json();
-            navigate(`/reviews/${data.id}`);
+            navigate(`/game-reviews/${data.game_review_id}`);
         } catch (err) {
             setError(err.message);
             console.error(err);
