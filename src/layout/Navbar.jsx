@@ -34,21 +34,32 @@ export default function Navbar() {
             <NavLink to="/games" className="main-nav__link">
               Games
             </NavLink>
-            <NavLink to="/profile" className="main-nav__link">
-              Profile
-            </NavLink>
-            <NavLink to="/friends" className="main-nav__link">
-              Friends
-            </NavLink>
+
+            {token && (
+              <>
+                <NavLink to="/mynotifications" className="main-nav__link">
+                  My Notifications
+                </NavLink>
+
+                <NavLink to="/profile" className="main-nav__link">
+                  Profile
+                </NavLink>
+
+                <NavLink to="/friends" className="main-nav__link">
+                  Friends
+                </NavLink>
+              </>
+            )}
+
           </nav>
         </div>
 
         <div className="site-header__right">
           {token ? (
             <>
-              <NavLink to="/account" className="account-link">
+              {/* <NavLink to="/account" className="account-link">
                 Account
-              </NavLink>
+              </NavLink> */}
               <button className="logout-button" onClick={handleLogout}>
                 Log out
               </button>

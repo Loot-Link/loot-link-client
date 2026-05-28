@@ -1,0 +1,83 @@
+.notification-banner {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 92%;
+  max-width: 1320px;
+  min-height: 34px;
+  
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 8px 14px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(34, 52, 125, 0.95),
+    rgba(16, 24, 58, 0.94)
+  );
+
+  border: 1px solid rgba(95, 150, 255, 0.48);
+  border-left: 5px solid #38a7ff;
+  border-radius: 8px;
+
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.48),
+    0 0 32px rgba(56, 167, 255, 0.22);
+
+  z-index: 9999;
+}
+
+.notification-icon {
+  font-size: 1.25rem;
+}
+
+.notification-banner span:nth-child(2) {
+  font-weight: 700;
+  color: #f5f7ff;
+}
+
+.notification-banner button {
+  margin-left: auto;
+
+  width: 28px;
+  height: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* notif type dropdown */
+.admin-notification-form select {
+  width: 100%;
+  height: 44px;
+
+  padding: 0 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.045);
+  color: white;
+
+  outline: none;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.admin-notification-form select option {
+  background: #11182c;
+  color: white;
+}
