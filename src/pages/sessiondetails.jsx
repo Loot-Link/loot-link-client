@@ -130,7 +130,7 @@ export default function SessionDetails() {
       clearInterval(interval);
       clearInterval(countdownTimerRef.current);
     };
-  }, [sessionId, countdown, sessionUsers.length, syncReadyCheckList]);
+  }, [sessionId, countdown, sessionUsers.length]);
 
   // Auto-scroll chat tracker
   useEffect(() => {
