@@ -22,9 +22,9 @@ export default function Navbar() {
           </NavLink>
 
           <nav className="main-nav">
-            {/* <NavLink to="/" className="main-nav__link">
+            <NavLink to="/" className="main-nav__link">
               Home
-            </NavLink> */}
+            </NavLink>
             <NavLink to="/sessions" className="main-nav__link">
               Game Sessions
             </NavLink>
@@ -33,6 +33,12 @@ export default function Navbar() {
             </NavLink>
             <NavLink to="/games" className="main-nav__link">
               Games
+            </NavLink>
+            <NavLink to="/profile" className="main-nav__link">
+              Profile
+            </NavLink>
+            <NavLink to="/writeReviews" className="main-nav__link">
+              Write a Review
             </NavLink>
 
             {token && (

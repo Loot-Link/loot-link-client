@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./sessions.css"; //client/src/pages/Sessions.css
 
 const API = "http://localhost:3000/api";
@@ -10,6 +10,8 @@ export default function Sessions() {
   const [sessions, setSessions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
 
   const syncSessions = async () => {
     // const response = await fetch(`${API}/sessions`);
@@ -18,6 +20,31 @@ export default function Sessions() {
     console.log(data);
     setSessions(data);
   };
+  
+    // Handle Automatic Search Engine Routing
+  const handleTriggerAutoMatchmaking = async () => {
+    try {
+      const res = await fetch(`${API}/sessions/matchmaking/auto-fill`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Leverages your existing global Auth context tokens
+        },
+      });
+
+      if (!res.ok) {
+        const errorNotice = await res.text();
+        alert(errorNotice); // Gracefully handles showing "No open matchmaking queues found"
+        return;
+      }
+
+      const match = await res.json();
+      alert("🎯 Squad Found! Transporting your operator to lobby communications...");
+      navigate(`/sessions/${match.session_id}`); // Bounces them instantly to the target room details
+    } catch (err) {
+      console.error("Matchmaking routing failure:", err);
+    }
+  };
+
 
   // FIXED: Wrapped in an async function to satisfy strict React linting rules
   useEffect(() => {
@@ -30,6 +57,8 @@ export default function Sessions() {
   const filteredSessions = sessions.filter((session) =>
     session.session_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const currentUserId = user?.user_id ?? user?.id;
 
   return (
     <section className="sessions-page">
@@ -51,6 +80,16 @@ export default function Sessions() {
               placeholder="Search sessions..."
             />
           </label>
+  
+          {/* NEW GLOWING AUTOMATIC MATCHMAKING TRIGGER LINK (Added) */}
+          <button 
+            type="button" 
+            className="global-matchmaking-btn" 
+            onClick={handleTriggerAutoMatchmaking}
+          >
+            Find a Match 🎲
+          </button>
+
           <div className="sessions-view-toggle">
             <button
               className={`sessions-view-toggle__button ${
@@ -83,41 +122,86 @@ export default function Sessions() {
           viewMode === "grid" ? "sessions-catalog--grid" : "sessions-catalog--list"
         }`}
       >
-        {filteredSessions.map((session) => (
-          <li className="sessions-catalog__item" key={session.session_id}>
-            <Link to={`/sessions/${session.session_id}`} className="session-card">
-              <div className="session-card__image-wrap">
-                <img
-                  className="session-card__image"
-                  // src={session.image}
-                  src={session.cover_image_url}
-                  alt={session.session_title}
-                />
-              </div>
-              <div className="session-card__body">
-                <div className="session-card__top-row">
-                  <h2 className="session-card__title">{session.session_title}</h2>
-                  {session.age_rating && (
-                    <span className="session-card__badge">{session.age_rating}</span>
+        {filteredSessions.map((session) => {
+          const isLobbyHost = Number(session.host_user_id) === Number(currentUserId);
+          const isLobbyLocked = session.session_status === 'locked';
+          
+          // NEW INTEGRATION MAPPING: Compares counting aggregates against slot cap settings
+          const isLobbyFull = Number(session.current_user_count) >= Number(session.max_users);
+
+          return (
+            <li className="sessions-catalog__item" key={session.session_id}>
+              <Link 
+                to={`/sessions/${session.session_id}`} 
+                className="session-card" 
+                style={{ 
+                  position: 'relative',
+                  // Prevent entering a filled session unless you already belong to the host squad
+                  pointerEvents: (isLobbyFull && !isLobbyHost) ? 'none' : 'auto',
+                  cursor: (isLobbyFull && !isLobbyHost) ? 'not-allowed' : 'pointer'
+                }}
+              >
+                
+                {/* Visual Ribbon Badges Overlay Layer (Updated) */}
+                <div className="session-badge-container">
+                  {isLobbyHost && (
+                    <span className="badge-status--host">Lobby Host 👑</span>
+                  )}
+                  {isLobbyLocked && (
+                    <span className="badge-status--locked">Lobby Locked 🔒</span>
+                  )}
+                  {/* Shows gold "Squad Full" badge when limits are crossed */}
+                  {!isLobbyHost && !isLobbyLocked && isLobbyFull && (
+                    <span className="badge-status--full">Squad Full 🚫</span>
                   )}
                 </div>
-                <div className="session-card__meta">
-                  {session.genre && (
-                    <span className="session-card__meta-item">{session.genre}</span>
-                  )}
-                  {session.category && (
-                    <span className="session-card__meta-item">{session.category}</span>
-                  )}
+
+                {/* Dims visual covers subtly when filled or frozen to signal block */}
+                <div className="session-card__image-wrap" style={{ opacity: (isLobbyLocked || isLobbyFull) ? 0.5 : 1 }}>
+                  <img
+                    className="session-card__image"
+                    // src={session.image}
+                    src={session.cover_image_url}
+                    alt={session.session_title}
+                  />
                 </div>
-                {session.session_description && (
-                  <p className="session-card__description">
-                    {session.session_description}
-                  </p>
+                <div className="session-card__body" style={{ opacity: (isLobbyLocked || isLobbyFull) ? 0.6 : 1 }}>
+                  <div className="session-card__top-row">
+                    <h2 className="session-card__title">{session.session_title}</h2>
+                    
+                    {/* Render a sleek fraction headcount micro-badge right inside the card row */}
+                    <span 
+                      className="session-card__badge" 
+                      style={{ background: isLobbyFull ? '#d87a13' : '#1e45b3', transition: 'background-color 0.2s' }}
+                    >
+                      {session.current_user_count || 1}/{session.max_users || 4}
+                    </span>
+                  </div>
+                  <div className="session-card__meta">
+                    {session.genre && (
+                      <span className="session-card__meta-item">{session.genre}</span>
+                    )}
+                    {session.category && (
+                      <span className="session-card__meta-item">{session.category}</span>
+                    )}
+  
+                    {/* NEW GLOWING PLAYSTYLE CUSTOM METADATA TAG (Added) */}
+                    {session.playstyle && (
+                      <span className="session-card__playstyle">{session.playstyle}</span>
+                    )}
+                  </div>
+                  {session.session_description && (
+                    <p className="session-card__description">
+                      {session.session_description.includes("[DISCORD_LINK]:")
+                        ? session.session_description.split("\n\n[DISCORD_LINK]:")[0]   
+                        : session.session_description}
+                    </p>
                 )}
-              </div>
-            </Link>
-          </li>
-        ))}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

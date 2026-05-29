@@ -211,3 +211,41 @@
     grid-template-columns: 1fr;
   }
 }
+/* Automated Matchmaking Action Control Element */
+.global-matchmaking-btn {
+  background: linear-gradient(135deg, #a04fff 0%, #681eb3 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(160, 79, 255, 0.3);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 15px; 
+
+.global-matchmaking-btn:hover {
+  background: linear-gradient(135deg, #b066ff 0%, #792bc4 100%);
+  box-shadow: 0 6px 20px rgba(160, 79, 255, 0.4);
+}
+
+.global-matchmaking-btn:active {
+  transform: scale(0.97);
+}
+
+/* Custom Playstyle Badges */
+.session-card__playstyle {
+  background: rgba(160, 79, 255, 0.15);
+  border: 1px solid rgba(160, 79, 255, 0.4);
+  color: #c499ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
