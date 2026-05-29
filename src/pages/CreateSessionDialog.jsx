@@ -18,27 +18,26 @@ export default function CreateSessionDialog({ game, onDismiss }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-        game_id: game.game_id,
-        session_title: formData.get("session_title"),
-        max_users: Number(formData.get("max_users")),
-        is_private: formData.get("is_private") === "on",
-        matchmaking_enabled: formData.get("matchmaking_enabled") === "on",
-        playstyle: formData.get("playstyle") || "Casual"
-      }), 
-    }); 
+          game_id: game.game_id,
+          session_title: formData.get("session_title"),
+          max_users: Number(formData.get("max_users")) || 4,
+          is_private: formData.get("is_private") === "on",
+          matchmaking_enabled: formData.get("matchmaking_enabled") === "on",
+          playstyle: formData.get("playstyle") || "Casual"
+        }),
+      });
 
-    if (!res.ok) {
-      const result = await res.json();
-      throw Error(result.message || "Failed to launch session");
+      if (!res.ok) {
+        const result = await res.json();
+        throw Error(result.message || "Failed to launch session");
+      }
+
+      const newSession = await res.json();
+      navigate(`/sessions/${newSession.session_id}`);
+    } catch (err) {
+      setError(err.message);
     }
-
-    const newSession = await res.json();
-    navigate(`/sessions/${newSession.session_id}`);
-    
-  } catch (err) { // Line 36: Catches everything safely from the ENTIRE sequence above
-    setError(err.message);
-  }
-};
+  };
 
   // Dimensions for clamping
   const boxHeight = 360; // Slightly increased height to accommodate the new toggle element safely
