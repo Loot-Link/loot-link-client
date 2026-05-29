@@ -154,7 +154,7 @@ export default function FriendsList(){
       });
     //Var to hold html view of list of requests
     const requestsView = requests.map((req)=>{
-      const isReceived = Number(req.sender_id) !== Number(user.id);
+      const isReceived = Number(req.actor_id) !== Number(user.id);
       return (
         <div key={req.friend_id} className="relation-card">
           <span><strong>{req.friend_username}</strong></span>
