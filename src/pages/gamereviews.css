@@ -196,7 +196,7 @@
 
 .game-review-image {
   width: 230px;
-  height: 150px;
+  height: auto;
   object-fit: cover;
 }
 
