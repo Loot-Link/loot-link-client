@@ -1,0 +1,96 @@
+/* =========================
+	 Game Review Details Page
+========================= */
+
+.game-reviews-page {
+	padding: 34px;
+	background: #101426;
+	min-height: 100vh;
+}
+
+.game-review-card {
+	display: flex;
+	background: rgba(12, 18, 40, 0.78);
+	border-radius: 16px;
+	border: 1px solid rgba(120, 140, 255, 0.16);
+	box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+	overflow: hidden;
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.game-review-image {
+	width: 260px;
+	height: 100%;
+	object-fit: cover;
+	background: #181c2f;
+	border-radius: 16px 0 0 16px;
+}
+
+.game-review-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 32px 32px 24px 32px;
+	background: rgba(12, 18, 40, 0.78);
+	border-radius: 0 16px 16px 0;
+	flex: 1;
+}
+
+.game-review-content h1 {
+	color: white;
+	font-size: 2.2rem;
+	margin: 0;
+}
+
+.game-review-content h2 {
+	color: rgba(255,255,255,0.62);
+	font-size: 1.1rem;
+	margin: 8px 0 18px 0;
+}
+
+.game-review-rating {
+	color: #ffd966;
+	font-weight: 800;
+	font-size: 1.1rem;
+}
+
+.game-review-meta {
+	display: flex;
+	gap: 18px;
+	align-items: center;
+	margin-bottom: 18px;
+}
+
+.game-review-text {
+	color: rgba(255,255,255,0.82);
+	font-size: 1.08rem;
+	line-height: 1.6;
+	margin: 0;
+}
+
+.game-review-details-actions {
+	display: flex;
+	gap: 16px;
+	margin-top: 32px;
+}
+
+.game-review-details-actions button {
+	min-width: 120px;
+	padding: 14px 22px;
+	border-radius: 12px;
+	border: 0;
+	background: linear-gradient(135deg, #6d5dfc, #8b5cf6);
+	color: white;
+	font-weight: 700;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.game-review-details-actions button:nth-child(2) {
+	background: linear-gradient(135deg, #8b5cf6, #6d5dfc);
+}
+.game-review-details-actions button:nth-child(3) {
+	background: linear-gradient(135deg, #ff5c5c, #ff8b5c);
+}
