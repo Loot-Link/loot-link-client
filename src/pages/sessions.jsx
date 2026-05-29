@@ -20,6 +20,7 @@ export default function Sessions() {
     console.log(data);
     setSessions(data);
   };
+  
     // Handle Automatic Search Engine Routing
   const handleTriggerAutoMatchmaking = async () => {
     try {
