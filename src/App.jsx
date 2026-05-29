@@ -12,6 +12,8 @@ import Profile from "./pages/profile";
 import Sessions from "./pages/sessions";
 import SessionDetails from "./pages/sessiondetails";
 import WriteReviews from "./pages/Reviews/writeReviews";
+import FriendsList from "./pages/FriendsList";
+import MyNotifications from "./pages/mynotifications";
 
 export default function App() {
   return (
@@ -25,6 +27,11 @@ export default function App() {
         <Route path='game-reviews' element={<GameReviews />} />
         <Route path="writeReviews" element={<WriteReviews />} />
         <Route path="game-reviews/:id" element={<GameReviewDetails />} />
+        <Route path="friends" element={<FriendsList />} />
+        <Route path="mynotifications" element={<MyNotifications />} />
+        <Route path="game-reviews" element={<GameReviews />} /> 
+        <Route path="/game-reviews/:id" element={<GameReviewDetails />} />
+        <Route path="sessions" element={<Sessions />} />         
         <Route path="/sessions/:sessionId" element={<SessionDetails />} />
         <Route path="register" element={<Register />} /> 
       </Route>
