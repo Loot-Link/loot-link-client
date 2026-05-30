@@ -50,6 +50,19 @@ export default function GameReviews() {
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
+
+
+  const incrementViewCount = async (reviewId) => {
+    await fetch(`${API}/game-reviews/${reviewId}/view`, {
+      method: "PATCH",
+    });
+  };
+
+
+
+
+
+
   return (
   <div className="game-reviews-page">
 
@@ -140,6 +153,7 @@ export default function GameReviews() {
               key={review.game_review_id}
               to={`/game-reviews/${review.game_review_id}`}
               className="game-review-link"
+              onClick={() => incrementViewCount(review.game_review_id)}
             >
 
               <article className="game-review-card">
