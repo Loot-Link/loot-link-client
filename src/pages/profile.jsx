@@ -70,7 +70,8 @@ export default function Profile() {
       try {
         const res = await fetch(`${API}/steam/${user.steam_id}/owned-games`);
         const data = await res.json();
-        setMySteamGames(data.response?.games || []);
+        // setMySteamGames(data.response?.games || []);
+        setMySteamGames(data.response?.games || data.games || data || []);
       } catch (err) {
         console.error(err);
       }
@@ -97,6 +98,8 @@ export default function Profile() {
   if (error) return <p className="app-shell">{error}</p>;
   if (!user) return <p className="app-shell">Loading profile...</p>;
 
+console.log(user);
+console.log("mySteamGames:", mySteamGames);
   return (
     <main className="profile-page">
       <section className="profile-card">
@@ -167,6 +170,8 @@ export default function Profile() {
             )}
           </div>
         </div>
+
+        
 
         {mySteamGames.length > 0 && (
           <div className="steam-games">

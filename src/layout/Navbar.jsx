@@ -34,9 +34,7 @@ export default function Navbar() {
             <NavLink to="/games" className="main-nav__link">
               Games
             </NavLink>
-            <NavLink to="/profile" className="main-nav__link">
-              Profile
-            </NavLink>
+
             <NavLink to="/writeReviews" className="main-nav__link">
               Write a Review
             </NavLink>
