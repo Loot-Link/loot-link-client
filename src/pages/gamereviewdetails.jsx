@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link, useParams  } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./gamereviewdetails.css";
 
 const API = "http://localhost:3000/api";
@@ -10,7 +10,10 @@ export default function GameReviewDetails() {
   const [gameReviews, setGameReviews] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
 
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
   const { id } = useParams();
+  const currentUserId = user?.user_id || user?.id;
 
   const syncGameReviews = async () => {
     // Guard against undefined id
@@ -32,6 +35,35 @@ export default function GameReviewDetails() {
       setGameReviews(data);
     } catch (error) {
       console.error('Error fetching game review:', error);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Are you sure you want to delete this review?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`${API}/game-reviews/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Delete failed with status ${response.status}`);
+      }
+
+      navigate("/game-reviews");
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      window.alert("Unable to delete review. You may not be authorized.");
     }
   };
 
@@ -104,7 +136,10 @@ export default function GameReviewDetails() {
           Edit Review
         </button>
 
-        <button>
+        <button
+          onClick={handleDeleteReview}
+          disabled={currentUserId !== gameReviews.user_id}
+        >
           Delete Review
         </button>
 
