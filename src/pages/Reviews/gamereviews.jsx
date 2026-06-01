@@ -47,7 +47,7 @@ export default function GameReviews() {
     })
     .sort((a, b) => {
       if (sortBy === "popular") return b.view_counter - a.view_counter;
-      if (sortBy === "rating") return b.rating_value - a.rating_value;
+      if (sortBy === "rating") return (b.vote_score || 0) - (a.vote_score || 0);
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
@@ -189,6 +189,10 @@ export default function GameReviews() {
 
                     <span>
                       Written by {review.username}
+                    </span>
+
+                    <span className="review-vote-counts">
+                      👍 {review.vote_upvotes || 0}  👎 {review.vote_downvotes || 0}
                     </span>
 
                     <span>
