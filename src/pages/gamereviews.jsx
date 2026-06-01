@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./gamereviews.css";
 
 const API = "http://localhost:3000/api";
 
 export default function GameReviews() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [gameReviews, setGameReviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -77,7 +78,7 @@ export default function GameReviews() {
         </p>
       </div>
 
-      <button className="write-review-button">
+      <button className="write-review-button" onClick={() => navigate("/writeReviews")}>
         Write a Review
       </button>
     </div>
