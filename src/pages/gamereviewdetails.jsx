@@ -9,6 +9,7 @@ const API = "http://localhost:3000/api";
 export default function GameReviewDetails() {
   const [gameReviews, setGameReviews] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
+  const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0, score: 0, userVote: null });
 
   const { token, user } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +36,21 @@ export default function GameReviewDetails() {
       setGameReviews(data);
     } catch (error) {
       console.error('Error fetching game review:', error);
+    }
+  };
+
+  const syncVotes = async () => {
+    if (!id) return;
+    try {
+      const headers = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const resp = await fetch(`${API}/game-reviews/${id}/votes`, { headers });
+      if (!resp.ok) throw new Error('Failed to fetch votes');
+      const data = await resp.json();
+      setVotes(data);
+    } catch (err) {
+      console.error('Error fetching votes:', err);
     }
   };
 
@@ -69,7 +85,50 @@ export default function GameReviewDetails() {
 
   useEffect(() => {
     syncGameReviews();
+    syncVotes();
   }, [id]); // Add id as dependency
+
+  const handleVote = async (value) => {
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      // If user already voted same value, remove vote
+      if (votes.userVote === value) {
+        const resp = await fetch(`${API}/game-reviews/${id}/vote`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!resp.ok) throw new Error('Failed to remove vote');
+        const result = await resp.json();
+        setVotes(result.totals || { ...votes, userVote: null });
+        return;
+      }
+
+      // Otherwise upsert vote
+      const resp = await fetch(`${API}/game-reviews/${id}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ voteValue: value }),
+      });
+
+      if (!resp.ok) {
+        const text = await resp.text();
+        throw new Error(text || 'Failed to vote');
+      }
+
+      const result = await resp.json();
+      setVotes(result.totals || votes);
+    } catch (err) {
+      console.error('Vote error:', err);
+      window.alert('Unable to submit vote.');
+    }
+  };
 
 
 
@@ -128,20 +187,35 @@ export default function GameReviewDetails() {
 
       <div className="game-review-details-actions">
 
-        <button>
-          Rate Review
-        </button>
-
-        <button>
-          Edit Review
+        <button
+          className={votes.userVote === 1 ? 'active up' : ''}
+          onClick={() => handleVote(1)}
+        >
+          👍 {votes.upvotes}
         </button>
 
         <button
-          onClick={handleDeleteReview}
-          disabled={currentUserId !== gameReviews.user_id}
+          className={votes.userVote === -1 ? 'active down' : ''}
+          onClick={() => handleVote(-1)}
         >
-          Delete Review
+          👎 {votes.downvotes}
         </button>
+
+        {currentUserId === gameReviews.user_id && (
+          <button
+            onClick={() => navigate(`/writeReviews?edit=1&id=${gameReviews.game_review_id}`)}
+          >
+            Edit Review
+          </button>
+        )}
+
+        {currentUserId === gameReviews.user_id && (
+          <button
+            onClick={handleDeleteReview}
+          >
+            Delete Review
+          </button>
+        )}
 
       </div>
 
