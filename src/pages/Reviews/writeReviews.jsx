@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./WriteReviews.css";
 
 const API = "http://localhost:3000/api";
@@ -8,6 +8,7 @@ const API = "http://localhost:3000/api";
 export default function WriteReviews() {
     const { token, user } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [gameReview, setGameReview] = useState("");
@@ -19,6 +20,8 @@ export default function WriteReviews() {
     const [selectedGame, setSelectedGame] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const [gamesLoading, setGamesLoading] = useState(false);
+    const [editingReviewId, setEditingReviewId] = useState(null);
+    const isEditing = searchParams.get('edit') === '1' && searchParams.get('id');
     
 
     useEffect(() => {
@@ -26,6 +29,42 @@ export default function WriteReviews() {
             navigate("/login");
         }
     }, [token, navigate]);
+
+    useEffect(() => {
+        const fetchReviewForEdit = async () => {
+            if (!isEditing) return;
+            const reviewId = searchParams.get('id');
+            setEditingReviewId(reviewId);
+
+            try {
+                const response = await fetch(`${API}/game-reviews/${reviewId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch review for editing');
+                }
+                const data = await response.json();
+                setReviewTitle(data.review_title);
+                setGameReview(data.game_review);
+                setRatingValue(data.rating_value);
+                setGameId(data.game_id);
+                // Set selectedGame so the game tile shows
+                const gameToFind = games.find(g => g.game_id === data.game_id);
+                if (gameToFind) {
+                    setSelectedGame(gameToFind);
+                }
+            } catch (err) {
+                console.error('Error fetching review:', err);
+                setError('Failed to load review for editing');
+            }
+        };
+
+        if (isEditing && games.length > 0) {
+            fetchReviewForEdit();
+        }
+    }, [isEditing, searchParams, token, games]);
 
     useEffect(() => {
         const fetchGames = async () => {
@@ -81,8 +120,11 @@ export default function WriteReviews() {
         }
 
         try {
-            const response = await fetch(`${API}/game-reviews`, {
-                method: "POST",
+            const method = editingReviewId ? "PATCH" : "POST";
+            const url = editingReviewId ? `${API}/game-reviews/${editingReviewId}` : `${API}/game-reviews`;
+            
+            const response = await fetch(url, {
+                method,
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
@@ -95,11 +137,12 @@ export default function WriteReviews() {
                 }),
             });
             if (!response.ok) {
-                throw new Error("Failed to post review");
+                throw new Error(editingReviewId ? "Failed to update review" : "Failed to post review");
             }
 
             const data = await response.json();
-            navigate(`/game-reviews/${data.game_review_id}`);
+            const reviewId = editingReviewId || data.game_review_id;
+            navigate(`/game-reviews/${reviewId}`);
         } catch (err) {
             setError(err.message);
             console.error(err);
@@ -111,7 +154,7 @@ export default function WriteReviews() {
     return (
         <>
             <main className='write-review-page'>
-                <h2>Write a Review</h2>
+                <h2>{editingReviewId ? "Edit Review" : "Write a Review"}</h2>
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 <form onSubmit={handleSubmitReview}>
                     <label className='review-title'>
@@ -197,7 +240,7 @@ export default function WriteReviews() {
                       </fieldset>
                       <div className="review-actions">
                           <button type="submit" id="submit-review" disabled={loading}>
-                              {loading ? "Posting..." : "Post Review"}
+                              {loading ? (editingReviewId ? "Updating..." : "Posting...") : (editingReviewId ? "Update Review" : "Post Review")}
                           </button>
                       </div>
                     </div>

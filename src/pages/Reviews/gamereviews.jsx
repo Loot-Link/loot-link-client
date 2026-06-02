@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../auth/AuthContext";
-import { Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 import "./gamereviews.css";
 
 const API = "http://localhost:3000/api";
 
 export default function GameReviews() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [gameReviews, setGameReviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,7 +47,7 @@ export default function GameReviews() {
     })
     .sort((a, b) => {
       if (sortBy === "popular") return b.view_counter - a.view_counter;
-      if (sortBy === "rating") return b.rating_value - a.rating_value;
+      if (sortBy === "rating") return (b.vote_score || 0) - (a.vote_score || 0);
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
@@ -77,7 +78,7 @@ export default function GameReviews() {
         </p>
       </div>
 
-      <button className="write-review-button">
+      <button className="write-review-button" onClick={() => navigate("/writeReviews")}>
         Write a Review
       </button>
     </div>
@@ -188,6 +189,10 @@ export default function GameReviews() {
 
                     <span>
                       Written by {review.username}
+                    </span>
+
+                    <span className="review-vote-counts">
+                      👍 {review.vote_upvotes || 0}  👎 {review.vote_downvotes || 0}
                     </span>
 
                     <span>
