@@ -135,6 +135,23 @@ export default function FriendsList(){
         fetchRequests();
       }
   }
+  const handleCancel = async (senderId) =>{
+    const response = await fetch(`${API}/friendslist/request/${senderId}`,
+       {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if(!response.ok){
+        alert(data.message);
+      }
+      if(response.ok){
+        fetchRequests();
+      }
+  }
+
     useEffect(()=>{
         if(token){
             fetchFriends();
@@ -165,7 +182,12 @@ export default function FriendsList(){
               <button className="btn-block" onClick={()=>handleBlock(req.friend_id)}>Block User</button>
             </div>
           ) : (
-            <span className="sent-request">Pending</span>
+            <div>
+              <span className="sent-request">Pending</span>
+              <button className="cancel-request" onClick={()=>handleCancel(req.friend_id)}>
+                Cancel
+              </button>
+            </div>
           )}
         </div>
       );
