@@ -29,10 +29,10 @@ export default function Navbar() {
               Games
             </NavLink>
             <NavLink to="/sessions" className="main-nav__link">
-              Game Sessions
+              Sessions
             </NavLink>
             <NavLink to="/game-reviews" className="main-nav__link">
-              Game Reviews
+              Reviews
             </NavLink>
             
 
@@ -41,7 +41,7 @@ export default function Navbar() {
                 <NavLink to="/friends" className="main-nav__link">
                   Friends
                 </NavLink>
-                
+
                 <NavLink to="/mynotifications" className="main-nav__link">
                   My Notifications
                 </NavLink>

@@ -69,7 +69,7 @@ export default function GameReviews() {
 
     <div className="game-reviews-hero">
       <div>
-        <h1>Game Reviews</h1>
+        <h1>Reviews</h1>
         <p>
           Browse player-written reviews across Loot-Link.
         </p>
