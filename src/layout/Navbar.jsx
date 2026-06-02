@@ -25,18 +25,23 @@ export default function Navbar() {
             <NavLink to="/" className="main-nav__link">
               Home
             </NavLink>
+            <NavLink to="/games" className="main-nav__link">
+              Games
+            </NavLink>
             <NavLink to="/sessions" className="main-nav__link">
               Game Sessions
             </NavLink>
             <NavLink to="/game-reviews" className="main-nav__link">
               Game Reviews
             </NavLink>
-            <NavLink to="/games" className="main-nav__link">
-              Games
-            </NavLink>
+            
 
             {token && (
               <>
+                <NavLink to="/friends" className="main-nav__link">
+                  Friends
+                </NavLink>
+                
                 <NavLink to="/mynotifications" className="main-nav__link">
                   My Notifications
                 </NavLink>
@@ -45,9 +50,7 @@ export default function Navbar() {
                   Profile
                 </NavLink>
 
-                <NavLink to="/friends" className="main-nav__link">
-                  Friends
-                </NavLink>
+                
               </>
             )}
 
