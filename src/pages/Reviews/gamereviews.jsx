@@ -221,8 +221,9 @@ export default function GameReviews() {
 
 
 {/****************************** Aside - Side Bar ******************************/}
+{/******** To be implemented at a later date*******/}
       <aside className="reviews-sidebar">
-        <h3>Popular Filters</h3>
+        {/* <h3>Popular Filters</h3>
 
         <button>
           Games I’ve Played
@@ -238,7 +239,7 @@ export default function GameReviews() {
 
         <button>
           New Releases
-        </button>
+        </button> */}
 
         <h3>Rating Quick Filter</h3>
 
