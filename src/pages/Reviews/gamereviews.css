@@ -39,6 +39,10 @@
   font-weight: 700;
 }
 
+.write-review-button:hover{
+  cursor: pointer;
+}
+
 
 /* =========================
    Toolbar: .game-reviews-toolbar

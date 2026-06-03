@@ -1,0 +1,262 @@
+/* ==========================================================================
+   Friends Page Layout & Containers
+   ========================================================================== */
+
+.friends-page {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.75rem 1.75rem 2.5rem;
+  color: #f5f7ff;
+}
+
+.friends-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.friends-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.friends-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+/* ==========================================================================
+   Tab Navigation Controls
+   ========================================================================== */
+
+.tab-controls {
+  display: inline-flex;
+  padding: 0.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-controls button {
+  border: none;
+  background: transparent;
+  color: #8b95a7;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.tab-controls button:hover {
+  color:#4f7cff;
+}
+
+.tab-controls button.active {
+  background: linear-gradient(90deg, #4f7cff, #6d5efc);
+  color: white;
+}
+
+/* ==========================================================================
+   Relation Cards (Friends, Requests, Blocked Rows)
+   ========================================================================== */
+
+.relation-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 160ms ease, border-color 160ms ease;
+  max-width: 20%;
+}
+
+.relation-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Forces the username to occupy left space and pushes action buttons to the right */
+.relation-card > p,
+.relation-card > span:first-child {
+  margin: 0;
+  flex-grow: 1;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+/* Container for multi-button sections (like Received Requests) */
+.relation-card div {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* Card Action Buttons */
+.relation-card button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 160ms ease;
+}
+
+.relation-card button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.relation-card button.btn-accept {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+.relation-card button.btn-accept:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
+.relation-card button.btn-block {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.relation-card button.btn-block:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.relation-card button.cancel-request {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.relation-card button.cancel-request:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Pending Badge Style */
+.sent-request {
+  font-size: 0.85rem;
+  color: #8b95a7;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  letter-spacing: 0.03em;
+}
+
+
+/* ==========================================================================
+   Add Friend Section
+   ========================================================================== */
+
+.friends-page section h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.2rem;
+  font-weight: 650;
+  color: #f5f7ff;
+}
+
+.add-friend {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 500px;
+}
+
+.add-friend-input {
+  flex-grow: 1;
+  padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 160ms ease;
+}
+
+.add-friend-input:focus {
+  border-color: rgba(120, 150, 255, 0.7);
+}
+
+.add-friend button {
+  padding: 0.7rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, #4f7cff, #6d5efc);
+  color: #10131a;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 160ms ease, background 160ms ease;
+}
+
+.add-friend button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.add-friend button:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  color: #5a6578;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 680px) {
+  .friends-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .tab-controls {
+    width: 100%;
+    display: flex;
+  }
+  
+  .tab-controls button {
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .relation-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .relation-card > p,
+  .relation-card > span:first-child {
+    flex-grow: 0;
+  }
+
+  .relation-card div, 
+  .relation-card button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .add-friend {
+    flex-direction: column;
+    max-width: 100%;
+  }
+}

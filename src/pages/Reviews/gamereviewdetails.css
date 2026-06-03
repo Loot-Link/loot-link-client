@@ -110,6 +110,20 @@
   background: linear-gradient(135deg, #ff5c5c, #ff8b5c);
 }
 
+.game-review-details-actions button.active {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.game-review-details-actions button.active.up {
+  background: linear-gradient(135deg, #28c76f, #20b03a);
+}
+
+.game-review-details-actions button.active.down {
+  background: linear-gradient(135deg, #ff6b6b, #ff3b3b);
+}
+
 @media (max-width: 780px) {
   .game-review-details-banner,
   .game-review-details-content {

@@ -35,10 +35,6 @@ export default function Navbar() {
               Games
             </NavLink>
 
-            <NavLink to="/writeReviews" className="main-nav__link">
-              Write a Review
-            </NavLink>
-
             {token && (
               <>
                 <NavLink to="/mynotifications" className="main-nav__link">
