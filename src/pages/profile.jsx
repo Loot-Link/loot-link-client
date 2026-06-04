@@ -12,8 +12,38 @@ export default function Profile() {
   const [mySteamGames, setMySteamGames] = useState([]);
   const [xboxProfile, setXboxProfile] = useState(null);
   const [mySessions, setMySessions] = useState([]); // Added for Active Sessions
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({date_of_birth: "", gender: "", bio: ""});
 
   // LootLink ************************************************************************************************
+  const handleOpenEdit = ()=>{
+    setFormData({
+      date_of_birth: user?.date_of_birth ? user.date_of_birth.split("T")[0] : "",
+      gender: user?.gender || "",
+      bio: user?.bio || ""
+    });
+    setIsEditing(true);
+  };
+
+  const handleSaveProfile = async () =>{
+    const response = await fetch(`${API}/users/me`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
+    const data = await response.json();
+    if(!response.ok){
+      alert("Failed to update");
+    }
+    console.log("Front end: ", data)
+    setUser(data);
+    setIsEditing(false);
+  }
+
+
   // Profile Data Fetch
   useEffect(() => {
     async function getProfile() {
@@ -103,10 +133,72 @@ console.log("mySteamGames:", mySteamGames);
   return (
     <main className="profile-page">
       <section className="profile-card">
-        <h1 className="profile-title">Profile</h1>
-        <p><strong>Username:</strong> {user.username}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <hr />
+        <div>
+          <h1 className="profile-title">Profile</h1>
+          <button className="edit-profile-btn" onClick={handleOpenEdit}>Edit Profile</button>
+          <p><strong>Username:</strong> {user.username}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Gender:</strong> {user.gender || "Not Specified"}</p>
+          <p><strong>Birthday:</strong> {user.date_of_birth ? 
+            new Date(user.date_of_birth).toLocaleDateString() : "Not specified"}</p>
+          <p><strong>Bio:</strong> {user.bio || "No Bio added yet. Tell people a bit about yourself!"}</p>
+          {isEditing && (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h2>Edit Profile Details</h2>
+          
+          <form onSubmit={handleSaveProfile}>
+            <div className="form-group">
+              <label htmlFor="gender">Gender</label>
+              <select 
+                id="gender"
+                value={formData.gender} 
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Non-binary">Non-binary</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="dob">Date of Birth</label>
+              <input 
+                id="dob"
+                type="date" 
+                value={formData.date_of_birth} 
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="bio">Short Bio</label>
+              <textarea 
+                id="bio"
+                rows="4"
+                maxLength="300"
+                placeholder="Write a short bio..."
+                value={formData.bio} 
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              />
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" className="btn-cancel" onClick={() => setIsEditing(false)}>
+                Cancel
+              </button>
+              <button type="submit" className="profile-button">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+          <hr />
+        </div>
 
         <h2 className="profile-section-title">My Active Sessions</h2>
         <div className="profile-sessions">
@@ -194,6 +286,7 @@ console.log("mySteamGames:", mySteamGames);
           </div>
         )}
       </section>
+      
     </main>
   );
 }
