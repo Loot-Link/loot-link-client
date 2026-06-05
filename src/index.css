@@ -155,3 +155,28 @@ body {
   background: #1b233d;
   margin-right: 18px;  
 }
+
+.dashboard-homepage,
+.dashboard-navbar,
+.dashboard-hero-billboard,
+.live-lobby-card,
+.sidebar-profile-card,
+.sidebar-friends-card,
+.sidebar-recommendation-item-card,
+button {
+  user-select: none;
+}
+
+.hero-title,
+.hero-subtitle,
+.section-title-label,
+.card-game-title-text,
+.card-lobby-description-text,
+.profile-card-username {
+  user-select: none;
+}
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
