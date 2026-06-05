@@ -318,7 +318,7 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
   if (!discordUrl || discordUrl.includes("{channel.id}") || discordUrl.includes("{")) {
     if (session.voice_id || session.session_id) {
       const pureRoomId = session.voice_id || session.session_id;
-      discordUrl = `https://discord.gg/${pureRoomId}`;
+      discordUrl = `https://discord.gg{pureRoomId}`;
     }
   }
 
@@ -333,66 +333,25 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
         </div>
       </div>
       
-      <div className="session-content"> 
-  <aside className="session-users-panel"> 
-    <h3 className="session-users-heading"> 🛡️ Joined Players ({sessionUsers.length}/{session.max_users}) </h3> 
-    
-    {sessionUsers.map((member) => ( 
-      <div key={member.user_id} className="session-user-card" > 
-        <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} /> 
-        
-        <div className="session-user-info"> 
-          <div className="session-username"> 
-            {member.username} 
-            {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>} 
-          </div> 
-          
-          <div style={{ marginTop: '4px' }}> 
-            <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}> 
-              {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"} 
-            </span> 
-          </div>
-
-          {/* PASTE THE KICK BUTTON DIRECTLY HERE (STILL INSIDE USER-INFO!) */}
-          {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
-            <button 
-              style={{ 
-                background: "rgba(255, 74, 74, 0.15)", 
-                border: "1px solid rgba(255, 74, 74, 0.4)", 
-                color: "#ff4a4a", 
-                fontSize: "0.7rem", 
-                cursor: "pointer", 
-                padding: "3px 8px", 
-                marginTop: "6px", 
-                borderRadius: "4px",
-                fontWeight: "700",
-                textTransform: "uppercase"
-              }}
-              onClick={async () => {
-                if (!window.confirm(`Are you sure you want to kick ${member.username}?`)) return;
-                try {
-                  const response = await fetch(`${API}/sessions/${sessionId}/kick/${member.user_id}`, {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` }
-                  });
-                  if (response.ok) {
-                    await syncSessionUsers();
-                  } else {
-                    alert("Failed to kick player.");
-                  }
-                } catch (err) {
-                  console.error("Kick error:", err);
-                }
-              }}
-            >
-              Kick Player 🥾
-            </button>
-          )}
-
-        </div> {/* Closes session-user-info safely */}
-      </div> // Closes session-user-card safely
-    ))}
-
+      <div className="session-content">
+        <aside className="session-users-panel">
+          <h3 className="session-users-heading"> 🛡️ Joined Players ({sessionUsers.length}/{session.max_users}) </h3>
+          {sessionUsers.map((member) => (
+            <div key={member.user_id} className="session-user-card" >
+              <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
+              <div className="session-user-info">
+                <div className="session-username">
+                  {member.username}
+                  {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
+                </div>
+                <div style={{ marginTop: '4px' }}>
+                  <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
+                    {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
 
           {!isUserInSession && !isLobbyHost && (
             <>

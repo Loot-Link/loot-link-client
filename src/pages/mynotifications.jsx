@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars, no-duplicate-imports */
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import "./mynotifications.css";
 
@@ -63,47 +62,33 @@ export default function Home() {
 
   const [createNotificationError, setCreateNotificationError] = useState("");
 
-  
-  // get users for dropdown - Handshake Repair Module
-  const syncSetAllUsers = useCallback(async () => {
+  // get users for dropdown
+  const syncSetAllUsers = async () => {
     try {
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      
-      const response = await fetch(`${API}/users/dropdown`, { headers });
-      
-      // ✅ FIXED: Clear loading before returning early on a failed request!
-      if (!response.ok) {
-        if (typeof setLoading === "function") setLoading(false);
-        return;
-      }
-
-      const usersData = await response.json();
-      setAllUsers(usersData); 
-    } catch (err) {
-      console.log("Dropdown log handled safely:", err.message);
-    }
-  }, [token]);
-
-  // get notification types for dropdown - Handshake Repair Module
-  const getNotificationTypes = useCallback(async () => {
-    try {
-      const response = await fetch(`${API}/notifications/types`);
-      
-      // ✅ FIXED: Intercept response failure before parsing json!
-      if (!response.ok) {
-        if (typeof setLoading === "function") setLoading(false);
-        return;
-      }
+      const response = await fetch(`${API}/users/dropdown`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = await response.json();
+      setAllUsers(data);
+    } catch (err) {
+      console.error("Failed to fetch users for dropdown", err);
+    }
+  };
+
+  // get notification types for dropdown
+  const getNotificationTypes = async () => {
+    try {
+      const response = await fetch(`${API}/notifications/types`);
+      const data = await response.json();
+
       setNotificationTypes(data);
     } catch (err) {
       console.error("Failed to fetch notification types", err);
     }
-  }, []);
+  };
 
   // create notification
   const handleCreateNotification = async () => {
@@ -151,43 +136,44 @@ export default function Home() {
     }
   };
 
- // get notifications - REPAIRED Handshake Validation Module
-  const getNotifications = useCallback(async () => {
+  // get notifications
+  const getNotifications = async () => {
     try {
       setLoading(true);
       setError("");
 
       const headers = {};
+
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${API}/notifications/mynotifications`, { headers });
+      const response = await fetch(
+        `${API}/notifications/mynotifications`,
+        { headers }
+      );
 
-      // ✅ FIXED: Check if the response failed BEFORE running .json()
+      const result = await response.json();
+
       if (!response.ok) {
-        if (response.status === 401) {
-          setError("Session expired. Please log out and back in to sync your profile.");
-          return;
-        }
-        
-        // Safe string extraction fallback to capture error codes comfortably
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to load my notifications.");
+        throw new Error(
+          result.message || "Failed to load my notifications."
+        );
       }
 
-      // ✅ SAFE: This will now only execute if the server response is a valid JSON payload!
-      const result = await response.json();
       setNotifications(result);
-
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  };
 
-  
+  useEffect(() => {
+    getNotifications();
+    syncSetAllUsers();
+    getNotificationTypes();
+  }, [token]);
 
   return (
     <main>
