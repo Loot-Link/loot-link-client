@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import "./session-reviews.css";
 
@@ -21,6 +21,18 @@ export default function SessionReviewModal({ sessionId, sessionUsers, currentUse
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (loading) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [loading]);
 
   if (!isOpen) return null;
 
