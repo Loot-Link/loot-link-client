@@ -10,84 +10,87 @@ export default function Home() {
   const [liveSessions, setLiveSessions] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [featuredGame, setFeaturedGame] = useState(null);
   const [_loading, setLoading] = useState(true);
 
-  // LIVE DATABASE FEED ENGINE: Fetches actual sessions and their companion Game images
   useEffect(() => {
     async function loadLivePlatformData() {
-  try {
+      try {
         // 1. Fetch your live database sessions (which already includes game names and images via SQL JOIN)
         const response = await fetch("http://localhost:3000/api/sessions");
         if (!response.ok) throw new Error("Database offline");
-        
         const data = await response.json();
         setLoading(false);
-                // Take the first 3 active rooms for your "Live Sessions" section grid
+
+        // Take the first 3 active rooms for your "Live Sessions" section grid
         const liveRooms = data.slice(0, 3).map(session => ({
           id: session.session_id,
-          // FIXED: Matches games.game_title from your SQL query
-          title: session.game_title || "LFG Lobby", 
+          title: session.game_title || "LFG Lobby",
           desc: session.session_title || "Active Matchmaking Lobby",
-          host: session.host_username || "Operator",
+          
+          // ✅ FIXED: Takes host_username straight from your database join query fields
+          host: session.host_username || "Admin",
+          
           count: `${session.current_user_count || 1} / ${session.max_users || 4}`,
           style: session.playstyle || "Casual",
-          // FIXED: Matches games.cover_image_url from your SQL query
           banner: session.cover_image_url || "https://picsum.photos"
         }));
-
-        
         setLiveSessions(liveRooms);
-        if (liveRooms.length > 0) {
-          const randomGame =
-            liveRooms[Math.floor(Math.random() * liveRooms.length)];
 
+        if (liveRooms.length > 0) {
+          const randomGame = liveRooms[Math.floor(Math.random() * liveRooms.length)];
           setFeaturedGame(randomGame);
         }
 
         // Take the next 3 scheduled rooms for your "Upcoming Sessions" timeline strip rows
         const upcomingRooms = data.slice(3, 6).map(session => ({
           id: session.session_id,
-          // FIXED: Matches games.game_title from your SQL query
           game: session.game_title || "Co-Op Play",
           title: session.session_title || "Squad Up",
           starts: "Active Now",
           slots: `${session.current_user_count || 1} / ${session.max_users || 4}`,
           isFull: Number(session.current_user_count) >= Number(session.max_users),
-          // FIXED: Matches games.cover_image_url from your SQL query
           image: session.cover_image_url || "https://picsum.photos"
         }));
-
-
-
         setUpcomingSessions(upcomingRooms);
 
         // 3. Dynamic Sidebar Recommendations Matrix - ALIGNED WITH REAL SQL KEYS
-    const recommendedRooms = data.slice(6, 10).map(session => ({
-      id: session.session_id,
-      title: session.game_title || "Recommended Game",
-      subtitle: session.session_title || "Squad Up Roster",
-      time: "Today " + (session.playstyle || "Active Now"),
-      isFull: Number(session.current_user_count) >= Number(session.max_users),
-      cover: session.cover_image_url || "https://picsum.photos",
-      meter: session.playstyle === "Ranked" ? "⭐⭐⭐⭐⭐" : "⭐⭐⭐⭐"
-    }));
+        const recommendedRooms = data.slice(6, 10).map(session => ({
+          id: session.session_id,
+          title: session.game_title || "Recommended Game",
+          subtitle: session.session_title || "Squad Up Roster",
+          time: "Today " + (session.playstyle || "Active Now"),
+          isFull: Number(session.current_user_count) >= Number(session.max_users),
+          cover: session.cover_image_url || "https://picsum.photos",
+          meter: session.playstyle === "Ranked" ? "⭐⭐⭐⭐⭐" : "⭐⭐⭐⭐"
+        }));
+        setRecommendations(recommendedRooms);
 
-    setRecommendations(recommendedRooms);
-    
-  } catch (err) {
-    console.error("⚠️ Dashboard API sync paused, using production fail-safes:", err.message);
-    // Clean static array fallback so your UI stays standing even if your server restarts
-    setLiveSessions([
+        // 4. Dynamic Sidebar Real Friends List Fetch Request
+        const friendsResponse = await fetch("http://localhost:3000/api/friendslist", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token") || ""}`, 
+          },
+        });
+        if (friendsResponse.ok) {
+          const friendsData = await friendsResponse.json();
+          setFriends(Array.isArray(friendsData) ? friendsData.slice(0, 3) : []);
+        }
+
+      } catch (err) {
+        console.error("⚠️ Dashboard API sync paused, using production fail-safes:", err.message);
+        setLiveSessions([
           { id: 1, title: "Overwatch 2", desc: "Chill Battle Royale squad run", host: "maverikk", count: "3 / 4", style: "Casual", banner: "https://picsum.photos" },
           { id: 2, title: "Rocket League", desc: "Ranked 3v3 Arena matches", host: "TurboCopter", count: "3 / 3", style: "Ranked", banner: "https://picsum.photos" }
         ]);
-      setLoading(false);
+        setLoading(false);
+      }
     }
-  }
 
     loadLivePlatformData();
   }, []);
+
    return (
     <div className="dashboard-homepage">
       
@@ -184,12 +187,12 @@ export default function Home() {
                 <div key={session.id} className="live-lobby-card">
                   <div className="card-media-frame">
                     <img 
-  src={session.banner || "https://unsplash.com"} 
-  alt="Lobby Art" 
-  className="card-cover-photo" 
-  onError={(e) => { e.target.src = "https://unsplash.com" }}
-/>
-                    <button className="card-join-now-overlay-btn" onClick={() => navigate("/sessions")}>Join Now</button>
+                      src={session.banner || "https://unsplash.com"} 
+                      alt="Lobby Art" 
+                      className="card-cover-photo" 
+                      onError={(e) => { e.target.src = "https://unsplash.com" }}
+                    />
+                    <button className="card-join-now-overlay-btn" onClick={() => navigate(`/sessions/${session.id}`)}>Join Now</button>
                   </div>
                   <div className="card-body-content">
                     <h3 className="card-game-title-text">{session.title}</h3>
@@ -198,7 +201,9 @@ export default function Home() {
                     <div className="card-metadata-footer-row">
                       <div className="host-profile-block-row">
                         <div className="host-mini-avatar-node" />
-                        <span className="host-username-text">{session.host}</span>
+                        <span className="host-username-text">
+                          {session.host || "Admin"}
+                      </span>
                       </div>
                       <div className="count-badge-column-alignment">
                         <span className="headcount-fraction-digits">{session.count} 👥</span>
@@ -263,28 +268,37 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ONLINE FRIENDS LIST CARD - FULLY RESTORED */}
           <div className="sidebar-friends-card">
-            <h3 className="sidebar-sub-section-title">Online Friends (2)</h3>
+            <h3 className="sidebar-sub-section-title">Online Friends ({friends.length})</h3>
             <div className="friends-list-stack">
               
-              {/* FRIEND NODE 1 */}
-              <div className="friend-list-item" style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
-                <div className="friend-avatar-node" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#4f7cff" }} />
-                <div className="friend-item-info" style={{ display: "flex", flexDirection: "column" }}>
-                  <span className="friend-item-name" style={{ fontSize: "0.85rem", fontWeight: "700" }}>GhostSniper</span>
-                  <span className="friend-item-activity" style={{ fontSize: "0.75rem", color: "#4a4e69" }}>Online</span>
-                </div>
-              </div>
-
-              {/* FRIEND NODE 2 */}
-              <div className="friend-list-item" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div className="friend-avatar-node" style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#ffaa00" }} />
-                <div className="friend-item-info" style={{ display: "flex", flexDirection: "column" }}>
-                  <span className="friend-item-name" style={{ fontSize: "0.85rem", fontWeight: "700" }}>maverikk</span>
-                  <span className="friend-item-activity" style={{ fontSize: "0.75rem", color: "#4a4e69" }}>In Game</span>
-                </div>
-              </div>
+              {/* SAFE FALLBACK CONTAINER LAYER */}
+              {friends.length === 0 ? (
+                <span style={{ fontSize: "0.8rem", color: "#72768d", fontStyle: "italic" }}>
+                  No online friends found. Add players on the Friends tab!
+                </span>
+              ) : (
+                // DYNAMIC LOOP: Binds your live PostgreSQL relational rows natively to your markup columns
+                friends.map((friend) => (
+                  <div key={friend.session_id || friend.id || friend.username} className="friend-list-item" style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+                    <img 
+                      src={friend.avatar_url || "https://picsum.photos"} 
+                      alt={friend.username}
+                      className="friend-avatar-node" 
+                      style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(255,255,255,0.1)" }} 
+                      onError={(e) => { e.target.src = "https://picsum.photos"; }}
+                    />
+                    <div className="friend-item-info" style={{ display: "flex", flexDirection: "column" }}>
+                      <span className="friend-item-name" style={{ fontSize: "0.85rem", fontWeight: "700" }}>
+                        {friend.username || "Operator"}
+                      </span>
+                      <span className="friend-item-activity" style={{ fontSize: "0.75rem", color: "#00ff66", fontWeight: "600" }}>
+                        ● Online
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
 
             </div>
           </div>

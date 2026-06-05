@@ -28,8 +28,8 @@ export default function GameReviews() {
 
   const currentUserId = user?.user_id ?? user?.id;
 
-  const visibleGameReviews = gameReviews
-    .filter((review) => {
+  const cleanReviews = Array.isArray(gameReviews) ? gameReviews : [];
+  const visibleGameReviews = cleanReviews.filter(review => {
       const matchesSearch =
         review.review_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         review.game_title?.toLowerCase().includes(searchTerm.toLowerCase());
