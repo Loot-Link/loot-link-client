@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../auth/AuthContext";
 import "./FriendsList.css";
 
@@ -12,31 +12,34 @@ export default function FriendsList(){
     const [ view, setView ] = useState("friends");
     const [targetId, setTargetId] = useState("");
     //Gets the list of friends from API
-    const fetchFriends = async () =>{
-        const response = await fetch(`${API}/friendslist`, 
-            {
-                headers: { "Authorization" : `Bearer ${token}`}
-            });
-        const data = await response.json();
-        setFriends(data);
-    }
-    //Gets the list of pending requests from API
-    const fetchRequests = async () =>{
-        const response = await fetch(`${API}/friendslist/requests`,
-            {
-                headers: { "Authorization" : `Bearer ${token}`}
-            });
-        const data = await response.json();
-        setRequests(data);
-    }
-    const fetchBlocks = async ()=>{
-      const response = await fetch(`${API}/friendslist/blocklist`,
+    const fetchFriends = useCallback(async () =>{
+      if(!token) return;
+      const response = await fetch(`${API}/friendslist`, 
         {
-          headers: { "Authorization": `Bearer ${token}`}
+          headers: { "Authorization" : `Bearer ${token}`}
         });
       const data = await response.json();
+      setFriends(data);
+    }, [token]);
+    //Gets the list of pending requests from API
+    const fetchRequests = useCallback(async () =>{
+      if(!token) return;
+      const response = await fetch(`${API}/friendslist/requests`,
+        {
+          headers: { "Authorization" : `Bearer ${token}`}
+        });
+      const data = await response.json();
+      setRequests(data);
+    }, [token]);
+    const fetchBlocks = useCallback(async ()=>{
+      if(!token) return;
+      const response = await fetch(`${API}/friendslist/blocklist`,
+      {
+        headers: { "Authorization": `Bearer ${token}`}
+      });
+      const data = await response.json();
       setBlocks(data);
-    }
+    }, [token]);
     //Handler function for button to send friend requests
     const handleSendRequest = async (username) =>{
     try {
@@ -158,9 +161,11 @@ export default function FriendsList(){
             fetchRequests();
             fetchBlocks();
         }
-    },[]);
-    //Varr to hold the html view of list of friends 
-    const friendView = friends.map((friend) =>{
+    },[token, fetchFriends, fetchRequests, fetchBlocks]);
+    const cleanFriends = Array.isArray(friends) ? friends : [];
+    //Var to hold the html view of list of friends 
+    
+    const friendView = cleanFriends.map((friend) =>{
     return (
         <div key={friend.user_id} className="relation-card">
           <p><strong>{friend.username}</strong></p>
@@ -170,7 +175,8 @@ export default function FriendsList(){
         );
       });
     //Var to hold html view of list of requests
-    const requestsView = requests.map((req)=>{
+    const cleanRequests = Array.isArray(requests) ? requests : [];
+    const requestsView = cleanRequests.map((req)=>{
       const isReceived = Number(req.actor_id) !== Number(user.id);
       return (
         <div key={req.friend_id} className="relation-card">
@@ -193,7 +199,8 @@ export default function FriendsList(){
       );
     });
     //Var to hold html view of blocked users
-    const blockedView = blocks.map((blocked)=>{
+    const cleanBlocks = Array.isArray(blocks) ? blocks : [];
+    const blockedView = cleanBlocks.map((blocked)=>{
       return (
         <div key={blocked.user_id} className="relation-card">
           <p><strong>{blocked.username}</strong></p>
