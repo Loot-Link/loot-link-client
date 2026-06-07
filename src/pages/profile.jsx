@@ -150,27 +150,26 @@ export default function Profile() {
     setIsEditing(true);
   };
 
-  const addFavoriteHandler = async (game) => {
-    const userId = user?.user_id;
-    if(!userId || !token){
-      alert("You must be logged in to favorite games.");
-    }
-    
-    
-    const response = await fetch(`${API}/users/${userId}/favorites`, {
+const handleFavoriteToggle = async (e, game) => {
+  e.preventDefault(); 
+  try {
+    const response = await fetch(`${API}/users/${user.id}/favorites`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify({game_id: game.game_id})
+      body: JSON.stringify({ game_id: game.game_id }),
     });
-    const data = await response.json();
-    if(!response.ok){
-      alert("Failed to Add favorite");
+
+    if (response.ok) {
+      const updatedList = await response.json();
+      setFavorites(updatedList);
     }
-    setFavorites(data);
-  };
+  } catch (err) {
+    console.error("Failed to toggle favorite status:", err);
+  }
+};
 
   if (error) return <p className="app-shell">{error}</p>;
   if (!user) return <p className="app-shell">Loading profile...</p>;
