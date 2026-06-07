@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/AuthContext";
 import { Link } from "react-router-dom";
 import CreateSessionDialog from "./CreateSessionDialog";
 import "./games.css";
@@ -8,15 +8,17 @@ const API = "http://localhost:3000/api";
 // const API = "import.meta.env.VITE_API";
 
 export default function Games() {
+  const { token, user } = useAuth();
+
   const [games, setGames] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [activeGameForDialog, setActiveGameForDialog] = useState(null);
+  const [ favorites, setFavorites ] = useState([]);
 
   const syncGames = async () => {
     const response = await fetch(`${API}/games`);
     const data = await response.json();
-    console.log(data);
     setGames(data);
   };
 
@@ -27,6 +29,50 @@ export default function Games() {
   const filteredGames = games.filter((game) =>
     game.game_title && game.game_title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+  async function fetchUserFavorites() {
+    if (!user?.id || !token ) return;
+    try {
+      const response = await fetch(`${API}/users/${user.id}/favorites`, {
+        headers: {"Authorization": `Bearer ${token}`}
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setFavorites(data);
+      }
+    } catch (err) {
+      console.error("Error loading initial favorites:", err);
+    }
+  }
+  fetchUserFavorites();
+}, [user, token]);
+
+const handleFavoriteToggle = async (e, game) => {
+  e.preventDefault(); 
+  if (!user?.id || !token) {
+    alert("Please log in to favorite games.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API}/users/${user.id}/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ game_id: game.game_id }),
+    });
+
+    if (response.ok) {
+      const updatedList = await response.json();
+      setFavorites(updatedList);
+    }
+  } catch (err) {
+    console.error("Failed to toggle favorite status:", err);
+  }
+};
 
   return (
     <section className="games-page">
@@ -92,6 +138,14 @@ export default function Games() {
                     src={game.cover_image_url}
                     alt={game.game_title}
                   />
+                  <button 
+                    className="game-card-fav-btn"
+                    onClick={(e) => handleFavoriteToggle(e, game)}
+                  >
+                    {Array.isArray(favorites) && favorites.some(fav => fav.game_id === game.game_id) 
+                      ? "★" 
+                      : "☆"}
+                  </button>
                 </div>
               </Link>
               <div className="game-card__body">

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import "./profile.css";
 
@@ -18,33 +19,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
 
   // LootLink ************************************************************************************************
-  const handleOpenEdit = ()=>{
-    setFormData({
-      date_of_birth: user?.date_of_birth ? user.date_of_birth.split("T")[0] : "",
-      gender: user?.gender || "",
-      bio: user?.bio || ""
-    });
-    setIsEditing(true);
-  };
-
-  const handleSaveProfile = async () =>{
-    const response = await fetch(`${API}/users/me`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(formData)
-    });
-    const data = await response.json();
-    if(!response.ok){
-      alert("Failed to update");
-    }
-    console.log("Front end: ", data)
-    setUser(data);
-    setIsEditing(false);
-  }
-
 
   // Profile Data Fetch
   useEffect(() => {
@@ -62,11 +36,15 @@ export default function Profile() {
     }
     if (token) getProfile();
   }, [token]);
-
+//Fetch list of favorite games
   useEffect(() => {
     async function fetchFavorite(){
       try {
-        const response = await fetch(`${API}/users/${currentUser.user_id}/favorites`);
+        const response = await fetch(`${API}/users/${user?.user_id}/favorites`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
         if (response.ok) {
           const data = await response.json();
           setFavorites(data);
@@ -78,10 +56,10 @@ export default function Profile() {
       }
     };
 
-    if (currentUser?.user_id) {
-      fetchFavorites();
+    if (user?.user_id) {
+      fetchFavorite();
     }
-  }, [currentUser]);
+  }, [user, token]);
 
   // Fetch My Active Sessions
   useEffect(() => {
@@ -145,7 +123,54 @@ export default function Profile() {
   // Handlers
   const connectSteam = () => { window.location.href = `${API}/connections/steam?token=${token}`; };
   const connectXbox = () => { window.location.href = `${API}/connections/xbox?token=${token}`; };
-  const connectBattleNet = () => { window.location.href = `${API}/connections/battlenet?token=${token}`; };
+  const connectBattleNet = () => { window.location.href = `${API}/connections/battlenet?token=${token}`; };  
+  const handleSaveProfile = async () =>{
+    const response = await fetch(`${API}/users/me`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
+    const data = await response.json();
+    if(!response.ok){
+      alert("Failed to update");
+    }
+    setUser(data);
+    setIsEditing(false);
+  };
+
+  const handleOpenEdit = ()=> {
+    setFormData({
+      date_of_birth: user?.date_of_birth ? user.date_of_birth.split("T")[0] : "",
+      gender: user?.gender || "",
+      bio: user?.bio || ""
+    });
+    setIsEditing(true);
+  };
+
+  const addFavoriteHandler = async (game) => {
+    const userId = user?.user_id;
+    if(!userId || !token){
+      alert("You must be logged in to favorite games.");
+    }
+    
+    
+    const response = await fetch(`${API}/users/${userId}/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({game_id: game.game_id})
+    });
+    const data = await response.json();
+    if(!response.ok){
+      alert("Failed to Add favorite");
+    }
+    setFavorites(data);
+  };
 
   if (error) return <p className="app-shell">{error}</p>;
   if (!user) return <p className="app-shell">Loading profile...</p>;
@@ -155,11 +180,10 @@ console.log("mySteamGames:", mySteamGames);
   return (
     <main className="profile-page">
       <section className="profile-card">
-        <div>
+        <div className="profile-infor-display">
           <h1 className="profile-title">Profile</h1>
           <button className="edit-profile-btn" onClick={handleOpenEdit}>Edit Profile</button>
           <p><strong>Username:</strong> {user.username}</p>
-          <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Gender:</strong> {user.gender || "Not Specified"}</p>
           <p><strong>Birthday:</strong> {user.date_of_birth ? 
             new Date(user.date_of_birth).toLocaleDateString() : "Not specified"}</p>
@@ -180,7 +204,6 @@ console.log("mySteamGames:", mySteamGames);
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Non-binary">Non-binary</option>
                 <option value="Prefer not to say">Prefer not to say</option>
               </select>
             </div>
@@ -224,41 +247,48 @@ console.log("mySteamGames:", mySteamGames);
   
   {loading ? (
     <p>Loading favorites...</p>
-  ) : favorites.length === 0 ? (
-    <p className="no-data-text">No favorite games added yet!</p>
-  ) : (
+  ) : (!Array.isArray(favorites) || favorites.length === 0) ? (
+  <p className="no-data-text">No favorite games added yet!</p>
+) : (
     <ul className="games-catalog__list">
       {favorites.slice(0, 5).map((game) => (
         <li className="games-catalog__item" key={game.game_id}>
-          <div className="game-card">
-            <Link to={`/games/${game.game_id}`}>
-              <div className="game-card__image-wrap">
-                <img 
-                  className="game-card__image" 
-                  src={game.cover_image_url} 
-                  alt={game.game_title} 
-                />
-              </div>
-                    </Link>
-                    
-                    <div className="game-card__body">
-                      <div className="game-card__top-row">
-                        <h2 className="game-card__title">{game.game_title}</h2>
-                        <button 
-                          className="game-card__badge"
-                          style={{ border: "none", cursor: "pointer" }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            // Utilizing your existing dialog mouse-tracking logic
-                            setActiveGameForDialog({
-                              ...game,
-                              clickX: e.clientX,
-                              clickY: e.clientY
-                            });
-                          }}
-                        >
-                          Start Session +
-                        </button>
+            <div className="game-card">
+              <Link to={`/games/${game.game_id}`}>
+                <div className="game-card__image-wrap">
+                  <img
+                    className="game-card__image"
+                    src={game.cover_image_url}
+                    alt={game.game_title}
+                  />
+                  <button 
+                    className="game-card-fav-btn"
+                    onClick={(e) => handleFavoriteToggle(e, game)}
+                  >
+                    {Array.isArray(favorites) && favorites.some(fav => fav.game_id === game.game_id) 
+                      ? "★" 
+                      : "☆"}
+                  </button>
+                </div>
+              </Link>
+              <div className="game-card__body">
+                <div className="game-card__top-row">
+                  <h2 className="game-card__title">{game.game_title}</h2>
+                  <button
+                    className="game-card__badge"
+                    style={{ border: "none", cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      // FIXED: Capture mouse position to pass to the Dialog
+                      setActiveGameForDialog({
+                        ...game,
+                        clickX: e.clientX,
+                        clickY: e.clientY
+                      });
+                    }}
+                  >
+                    Start Session +
+                  </button>
                       </div>
                       
                       <div className="game-card__meta">
@@ -309,7 +339,11 @@ console.log("mySteamGames:", mySteamGames);
         <div className="profile-platforms">
           <div className="profile-platform">
             <h3>Battle.net</h3>
-            <button className="profile-button" onClick={connectBattleNet}>Connect BNET</button>
+            {user.battle_net_id ? <p className="connected"> Connected ✅</p> : ( 
+            <>
+              <p className="not-connected">Not connected</p>
+              <button className="profile-button" onClick={connectBattleNet}>Connect BNET</button>
+            </> )}
           </div>
           <div className="profile-platform">
             <h3>Xbox</h3>
