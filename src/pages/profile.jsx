@@ -14,6 +14,8 @@ export default function Profile() {
   const [mySessions, setMySessions] = useState([]); // Added for Active Sessions
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({date_of_birth: "", gender: "", bio: ""});
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // LootLink ************************************************************************************************
   const handleOpenEdit = ()=>{
@@ -60,6 +62,26 @@ export default function Profile() {
     }
     if (token) getProfile();
   }, [token]);
+
+  useEffect(() => {
+    async function fetchFavorite(){
+      try {
+        const response = await fetch(`${API}/users/${currentUser.user_id}/favorites`);
+        if (response.ok) {
+          const data = await response.json();
+          setFavorites(data);
+        }
+      } catch (error) {
+        console.error("Failed to load favorite games:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser?.user_id) {
+      fetchFavorites();
+    }
+  }, [currentUser]);
 
   // Fetch My Active Sessions
   useEffect(() => {
@@ -197,6 +219,63 @@ console.log("mySteamGames:", mySteamGames);
         </div>
       </div>
     )}
+    <div className="profile-section favorites-section">
+  <h2 className="profile-section__title">Favorite Games</h2>
+  
+  {loading ? (
+    <p>Loading favorites...</p>
+  ) : favorites.length === 0 ? (
+    <p className="no-data-text">No favorite games added yet!</p>
+  ) : (
+    <ul className="games-catalog__list">
+      {favorites.slice(0, 5).map((game) => (
+        <li className="games-catalog__item" key={game.game_id}>
+          <div className="game-card">
+            <Link to={`/games/${game.game_id}`}>
+              <div className="game-card__image-wrap">
+                <img 
+                  className="game-card__image" 
+                  src={game.cover_image_url} 
+                  alt={game.game_title} 
+                />
+              </div>
+                    </Link>
+                    
+                    <div className="game-card__body">
+                      <div className="game-card__top-row">
+                        <h2 className="game-card__title">{game.game_title}</h2>
+                        <button 
+                          className="game-card__badge"
+                          style={{ border: "none", cursor: "pointer" }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            // Utilizing your existing dialog mouse-tracking logic
+                            setActiveGameForDialog({
+                              ...game,
+                              clickX: e.clientX,
+                              clickY: e.clientY
+                            });
+                          }}
+                        >
+                          Start Session +
+                        </button>
+                      </div>
+                      
+                      <div className="game-card__meta">
+                        {game.genre && <span className="game-card__meta-item">{game.genre}</span>}
+                        {game.category && <span className="game-card__meta-item">{game.category}</span>}
+                      </div>
+                      
+                      {game.game_description && (
+                        <p className="game-card__description">{game.game_description}</p>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
           <hr />
         </div>
 
