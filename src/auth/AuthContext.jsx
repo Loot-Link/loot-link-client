@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState} from "react";
 
 const API = import.meta.env.VITE_API;
 
@@ -6,14 +7,16 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [user, setUser] = useState(null);
-  
-  useEffect(() => {
-    if (token && !user) {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      setUser(payload);
+  const [user, setUser] = useState(() => {
+  const savedToken = localStorage.getItem("token");
+    if (!savedToken) return null;
+    try {
+      return JSON.parse(atob(savedToken.split(".")[1]));
+    } catch {
+      return null;
     }
-  }, [token]);
+  });
+
   
   const register = async (credentials) => {
     const response = await fetch(API + "/api/users/register", {

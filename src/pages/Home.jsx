@@ -261,11 +261,20 @@ export default function Home() {
               <span className="profile-online-glow-dot" />
             </div>
             <div className="profile-card-info">
-              <h3 className="profile-card-username">
-                {user?.username || localStorage.getItem("username") || "abriche123"}
-              </h3>
-              <p className="profile-card-rank">🏆 Tier 1 Leader</p>
-            </div>
+              {user?.username || localStorage.getItem("username") ? (
+                <>
+                  <h3 className="profile-card-username">
+                    {user?.username || localStorage.getItem("username")}
+                  </h3>
+                <p className="profile-card-rank">🏆 Tier 1 Leader</p>
+              </>
+            ) : (
+              <>
+                <h3 className="profile-card-username">Guest</h3>
+                <p className="profile-card-rank">Please log in</p>
+              </>
+          )}
+        </div>
           </div>
 
           <div className="sidebar-friends-card">
