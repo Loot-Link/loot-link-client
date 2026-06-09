@@ -69,7 +69,7 @@ export default function GameReviews() {
 
     <div className="game-reviews-hero">
       <div>
-        <h1>Game Reviews</h1>
+        <h1>Reviews</h1>
         <p>
           Browse player-written reviews across Loot-Link.
         </p>
@@ -221,8 +221,11 @@ export default function GameReviews() {
 
 
 {/****************************** Aside - Side Bar ******************************/}
+
       <aside className="reviews-sidebar">
-        <h3>Popular Filters</h3>
+        
+        {/******** To be implemented at a later date*******/}
+        {/* <h3>Popular Filters</h3>
 
         <button>
           Games I’ve Played
@@ -238,7 +241,7 @@ export default function GameReviews() {
 
         <button>
           New Releases
-        </button>
+        </button> */}
 
         <h3>Rating Quick Filter</h3>
 
