@@ -147,16 +147,19 @@ export default function SessionReviewModal({ sessionId, sessionUsers, currentUse
                       <span>{member.username}</span>
                     </div>
                     <div className="review-descriptors">
-                      {descriptorOptions.map((descriptor) => (
-                        <button
-                          type="button"
-                          key={descriptor}
-                          className={`review-descriptor-button ${ratings.descriptors.includes(descriptor) ? "review-descriptor-button--active" : ""}`}
-                          onClick={() => toggleDescriptor(member.user_id, descriptor)}
-                        >
-                          {descriptor}
-                        </button>
-                      ))}
+                      {descriptorOptions.map((descriptor) => {
+                        const isActive = ratings.descriptors;
+                        return (
+                          <button
+                            type="button"
+                            key={descriptor}
+                            className={`review-descriptor-button ${isActive ? "review-descriptor-button--active" : ""}`}
+                            onClick={() => toggleDescriptor(member.user_id, descriptor)}
+                          >
+                            {descriptor}
+                          </button>
+                        );
+                      })}
                     </div>
                     <textarea
                       className="review-player-note"
