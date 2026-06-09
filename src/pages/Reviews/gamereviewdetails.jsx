@@ -17,7 +17,6 @@ export default function GameReviewDetails() {
   const currentUserId = user?.user_id || user?.id;
 
   const syncGameReviews = async () => {
-    // Guard against undefined id
     if (!id) {
       console.warn('Review ID is not available yet');
       return;
@@ -26,7 +25,6 @@ export default function GameReviewDetails() {
     try {
       const response = await fetch(`${API}/game-reviews/${id}`);
       
-      // Check if response is ok before parsing
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -86,7 +84,7 @@ export default function GameReviewDetails() {
   useEffect(() => {
     syncGameReviews();
     syncVotes();
-  }, [id]); // Add id as dependency
+  }, [id]);
 
   const handleVote = async (value) => {
     if (!token) {
@@ -107,7 +105,6 @@ export default function GameReviewDetails() {
         return;
       }
 
-      // Otherwise upsert vote
       const resp = await fetch(`${API}/game-reviews/${id}/vote`, {
         method: 'POST',
         headers: {
@@ -129,10 +126,6 @@ export default function GameReviewDetails() {
       window.alert('Unable to submit vote.');
     }
   };
-
-
-
-  // console.log("filtered:", filteredGameReviews);
 
   return (
   <div className="game-review-details-page">

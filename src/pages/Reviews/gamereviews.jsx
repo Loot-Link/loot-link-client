@@ -221,8 +221,10 @@ export default function GameReviews() {
 
 
 {/****************************** Aside - Side Bar ******************************/}
-{/******** To be implemented at a later date*******/}
+
       <aside className="reviews-sidebar">
+        
+        {/******** To be implemented at a later date*******/}
         {/* <h3>Popular Filters</h3>
 
         <button>
