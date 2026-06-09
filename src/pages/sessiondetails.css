@@ -55,6 +55,23 @@
   border-radius: 16px;
 }
 
+.session-review-button {
+  width: 100%;
+  margin-top: 16px;
+  background: #4f7cff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.session-review-button:hover {
+  opacity: 0.92;
+}
+
 .session-main-panel {
   display: flex;
   flex: 1;
@@ -154,6 +171,7 @@
   margin-top: 0;
   padding-top: 1rem;
   border-top: 1px solid rgba(120, 140, 255, 0.12);
+  max-width: 180px;
 }
 
 .own-message {

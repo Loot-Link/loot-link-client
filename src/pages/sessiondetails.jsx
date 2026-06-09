@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
+import SessionReviewModal from "./Reviews/session-reviews";
 import "./sessiondetails.css";
 
 const API = "http://localhost:3000/api";
@@ -22,6 +23,7 @@ export default function SessionDetails() {
   const [userSearch, setUserSearch] = useState("");
   const [addUserError, setAddUserError] = useState("");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const syncSetAllUsers = async () => {
     try {
     const response = await fetch(`${API}/users/dropdown`, {
@@ -295,8 +297,11 @@ export default function SessionDetails() {
     navigator.clipboard.writeText(window.location.href);
     alert("Invite link copied!");
   };
-const currentUserId = user?.user_id ?? user?.id;
-const isUserInSession = sessionUsers.some((pUser) => Number(pUser.user_id) === Number(currentUserId));
+
+  const handleCloseReviewModal = () => setIsReviewModalOpen(false);
+
+  const currentUserId = user?.user_id ?? user?.id;
+  const isUserInSession = sessionUsers.some((pUser) => Number(pUser.user_id) === Number(currentUserId));
 const isLobbyHost = Number(currentUserId) === Number(session.host_user_id);
 const isLobbyLocked = session.session_status === 'locked';
 const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
@@ -401,6 +406,11 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
               </button>
               {addUserError && <div className="add-user-error" style={{ marginTop: "5px", color: "#ff4a4a", fontSize: "0.8rem" }}>{addUserError}</div>}
             </div>
+          )}
+          {isUserInSession && (
+            <button className="session-review-button" onClick={() => setIsReviewModalOpen(true)}>
+              Review Your Session
+            </button>
           )}
         </aside>
                 <main className="session-main-panel">
@@ -507,6 +517,13 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
             </div>
           )}
         </main>
+        <SessionReviewModal
+          sessionId={sessionId}
+          sessionUsers={sessionUsers}
+          currentUserId={currentUserId}
+          isOpen={isReviewModalOpen}
+          onClose={handleCloseReviewModal}
+        />
       </div>
     </div>
   );
