@@ -125,6 +125,10 @@
   gap: 0.5rem;
   margin-bottom: 1.25rem;
 }
+.form-group select option {
+  background-color: #141821; 
+  color: #f5f7ff;            
+}
 
 .form-group label {
   color: #8b95a7;
