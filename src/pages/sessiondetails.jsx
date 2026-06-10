@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import SessionReviewModal from "./Reviews/session-reviews";
@@ -24,6 +24,7 @@ export default function SessionDetails() {
   const [addUserError, setAddUserError] = useState("");
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [userSessionReview, setUserSessionReview] = useState(null);
   const syncSetAllUsers = async () => {
     try {
     const response = await fetch(`${API}/users/dropdown`, {
@@ -35,6 +36,30 @@ export default function SessionDetails() {
       console.error("Failed to fetch users for dropdown", err);
     }
   };
+
+  const loadUserSessionReview = useCallback(async () => {
+    if (!token || !sessionId) {
+      setUserSessionReview(null);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/session-reviews/${sessionId}/user`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        setUserSessionReview(null);
+        return;
+      }
+
+      const data = await res.json();
+      setUserSessionReview(data || null);
+    } catch (err) {
+      console.error("Failed to load user session review:", err);
+      setUserSessionReview(null);
+    }
+  }, [sessionId, token]);
 
   // 1. Session Data Fetch
   const syncSession = async () => {
@@ -145,6 +170,14 @@ export default function SessionDetails() {
       clearInterval(countdownTimerRef.current);
     };
   }, [sessionId, countdown, sessionUsers.length]);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    const timer = setTimeout(() => {
+      void loadUserSessionReview();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [sessionId, loadUserSessionReview]);
 
   // Chat auto-scroll tracker - watches length to avoid scroll locking bugs
   useEffect(() => {
@@ -298,7 +331,10 @@ export default function SessionDetails() {
     alert("Invite link copied!");
   };
 
-  const handleCloseReviewModal = () => setIsReviewModalOpen(false);
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+    void loadUserSessionReview();
+  };
 
   const currentUserId = user?.user_id ?? user?.id;
   const isUserInSession = sessionUsers.some((pUser) => Number(pUser.user_id) === Number(currentUserId));
@@ -323,7 +359,7 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
   if (!discordUrl || discordUrl.includes("{channel.id}") || discordUrl.includes("{")) {
     if (session.voice_id || session.session_id) {
       const pureRoomId = session.voice_id || session.session_id;
-      discordUrl = `https://discord.gg{pureRoomId}`;
+      discordUrl = `https://discord.gg/${pureRoomId}`;
     }
   }
 
@@ -409,7 +445,7 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
           )}
           {isUserInSession && (
             <button className="session-review-button" onClick={() => setIsReviewModalOpen(true)}>
-              Review Your Session
+              {userSessionReview ? "Edit your Review" : "Review Your Session"}
             </button>
           )}
         </aside>

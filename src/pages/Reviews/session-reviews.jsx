@@ -1,24 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import "./session-reviews.css";
 
 const API = "http://localhost:3000/api";
 const descriptorOptions = ["Friendly", "Good Teammate", "Fun", "Rude", "Comms Abuse"];
 
+function getDefaultMemberRatings(members) {
+  const initialRatings = {};
+  members.forEach((member) => {
+    initialRatings[member.user_id] = { descriptors: [], note: "" };
+  });
+  return initialRatings;
+}
+
 export default function SessionReviewModal({ sessionId, sessionUsers, currentUserId, isOpen, onClose }) {
   const { token } = useAuth();
-  const visibleMembers = sessionUsers.filter(
-    (member) => Number(member.user_id) !== Number(currentUserId)
+  const visibleMembers = useMemo(
+    () => sessionUsers.filter((member) => Number(member.user_id) !== Number(currentUserId)),
+    [sessionUsers, currentUserId]
   );
 
+  const visibleMembersRef = useRef(visibleMembers);
+
+  useEffect(() => {
+    visibleMembersRef.current = visibleMembers;
+  }, [visibleMembers]);
+
   const [sessionRating, setSessionRating] = useState(0);
-  const [memberRatings, setMemberRatings] = useState(() => {
-    const initialRatings = {};
-    visibleMembers.forEach((member) => {
-      initialRatings[member.user_id] = { descriptors: [], note: "" };
-    });
-    return initialRatings;
-  });
+  const [memberRatings, setMemberRatings] = useState(() => getDefaultMemberRatings(visibleMembers));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -33,6 +42,52 @@ export default function SessionReviewModal({ sessionId, sessionUsers, currentUse
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [loading]);
+
+  const loadExistingReview = useCallback(async (members) => {
+    const initialRatings = getDefaultMemberRatings(members);
+    setSessionRating(0);
+    setMemberRatings(initialRatings);
+    setError("");
+
+    try {
+      const response = await fetch(`${API}/session-reviews/${sessionId}/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Unable to fetch existing session review.");
+      }
+
+      const review = await response.json();
+      if (!review) return;
+
+      setSessionRating(review.session_rating || 0);
+      const ratings = getDefaultMemberRatings(members);
+      (review.member_ratings || []).forEach((memberRating) => {
+        ratings[memberRating.user_id] = {
+          descriptors: Array.isArray(memberRating.descriptors) ? memberRating.descriptors : [],
+          note: memberRating.note || "",
+        };
+      });
+      setMemberRatings(ratings);
+    } catch (err) {
+      console.error("Failed to load existing session review:", err);
+      setError("Could not load your existing review.");
+    }
+  }, [sessionId, token]);
+
+  useEffect(() => {
+    if (!isOpen || !sessionId) return;
+
+    const timer = setTimeout(() => {
+      void loadExistingReview(visibleMembersRef.current);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [isOpen, sessionId, loadExistingReview]);
 
   if (!isOpen) return null;
 
@@ -148,7 +203,7 @@ export default function SessionReviewModal({ sessionId, sessionUsers, currentUse
                     </div>
                     <div className="review-descriptors">
                       {descriptorOptions.map((descriptor) => {
-                        const isActive = ratings.descriptors;
+                        const isActive = ratings.descriptors.includes(descriptor);
                         return (
                           <button
                             type="button"
