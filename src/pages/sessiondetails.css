@@ -726,13 +726,13 @@
   font-size: 1.2rem;
   margin-top: 15px;
   margin-bottom: 15px;
-  animation: pulse 1s infinite alternate;
+  /* animation: pulse 1s infinite alternate; */
 }
 
-@keyframes pulse {
+/* @keyframes pulse {
   from { opacity: 0.6; }
   to { opacity: 1; }
-}
+} */
 /* Premium Matchmaking Live Toggle Switch Layout */
 .host-settings__toggle-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -752,13 +752,13 @@
   color: #ffffff;
   border: 1px solid rgba(160, 79, 255, 0.4);
   box-shadow: 0 0 15px rgba(160, 79, 255, 0.4);
-  animation: queuePulse 1.5s infinite alternate;
+  /* animation: queuePulse 1.5s infinite alternate; */
 }
 
-@keyframes queuePulse {
+/* @keyframes queuePulse {
   from { box-shadow: 0 0 10px rgba(160, 79, 255, 0.2); }
   to { box-shadow: 0 0 20px rgba(160, 79, 255, 0.5); }
-}
+} */
 
 /* Neon Catalog Ribbon Indicator Badge */
 .badge-status--queue {
