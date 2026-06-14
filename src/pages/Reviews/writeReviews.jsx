@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "./WriteReviews.css";
+import "./writeReviews.css";
 
 const API = "http://localhost:3000/api";
 
