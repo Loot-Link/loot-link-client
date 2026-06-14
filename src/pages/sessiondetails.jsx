@@ -416,7 +416,7 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
                 type="text" 
                 value={userSearch} 
                 className="session-chat-input"
-                style={{ background: "#090e20", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "8px 12px", width: "100%", marginBottom: "5px" }}
+                style={{ background: "#090e20", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "8px 12px", width: "calc(100% - 24px)", marginBottom: "5px" }}
                 onChange={(event) => { setUserSearch(event.target.value); setShowUserDropdown(true); }} 
                 placeholder="Search users..." 
               />

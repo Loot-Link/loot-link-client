@@ -151,6 +151,24 @@ export default function WriteReviews() {
         }
     };
 
+
+
+    useEffect(() => {
+        const gameIdFromUrl = searchParams.get("gameId");
+
+        if (!gameIdFromUrl || games.length === 0) return;
+
+        const game = games.find(
+            (g) => Number(g.game_id) === Number(gameIdFromUrl)
+        );
+
+        if (game) {
+            setSelectedGame(game);
+            setGameId(game.game_id);
+        }
+    }, [games, searchParams]);
+
+
     return (
         <>
             <main className='write-review-page'>

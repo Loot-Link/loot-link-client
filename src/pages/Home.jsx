@@ -34,7 +34,7 @@ export default function Home() {
           
           count: `${session.current_user_count || 1} / ${session.max_users || 4}`,
           style: session.playstyle || "Casual",
-          banner: session.cover_image_url || "https://picsum.photos"
+          banner: session.cover_image_url 
         }));
         setLiveSessions(liveRooms);
 
@@ -51,7 +51,7 @@ export default function Home() {
           starts: "Active Now",
           slots: `${session.current_user_count || 1} / ${session.max_users || 4}`,
           isFull: Number(session.current_user_count) >= Number(session.max_users),
-          image: session.cover_image_url || "https://picsum.photos"
+          image: session.cover_image_url 
         }));
         setUpcomingSessions(upcomingRooms);
 
@@ -62,7 +62,7 @@ export default function Home() {
           subtitle: session.session_title || "Squad Up Roster",
           time: "Today " + (session.playstyle || "Active Now"),
           isFull: Number(session.current_user_count) >= Number(session.max_users),
-          cover: session.cover_image_url || "https://picsum.photos",
+          cover: session.cover_image_url,
           meter: session.playstyle === "Ranked" ? "⭐⭐⭐⭐⭐" : "⭐⭐⭐⭐"
         }));
         setRecommendations(recommendedRooms);
@@ -81,8 +81,8 @@ export default function Home() {
       } catch (err) {
         console.error("⚠️ Dashboard API sync paused, using production fail-safes:", err.message);
         setLiveSessions([
-          { id: 1, title: "Overwatch 2", desc: "Chill Battle Royale squad run", host: "maverikk", count: "3 / 4", style: "Casual", banner: "https://picsum.photos" },
-          { id: 2, title: "Rocket League", desc: "Ranked 3v3 Arena matches", host: "TurboCopter", count: "3 / 3", style: "Ranked", banner: "https://picsum.photos" }
+          { id: 1, title: "Overwatch 2", desc: "Chill Battle Royale squad run", host: "maverikk", count: "3 / 4", style: "Casual"  },
+          { id: 2, title: "Rocket League", desc: "Ranked 3v3 Arena matches", host: "TurboCopter", count: "3 / 3", style: "Ranked" }
         ]);
         setLoading(false);
       }
@@ -104,7 +104,7 @@ export default function Home() {
               rgba(0,0,0,.65),
               rgba(0,0,0,.75)
             ),
-            url(${featuredGame?.banner || "https://picsum.photos/1600/800"})
+            url(${featuredGame?.banner })
           `
         }}
       >
@@ -187,10 +187,10 @@ export default function Home() {
                 <div key={session.id} className="live-lobby-card">
                   <div className="card-media-frame">
                     <img 
-                      src={session.banner || "https://unsplash.com"} 
+                      src={session.banner } 
                       alt="Lobby Art" 
                       className="card-cover-photo" 
-                      onError={(e) => { e.target.src = "https://unsplash.com" }}
+                      
                     />
                     <button className="card-join-now-overlay-btn" onClick={() => navigate(`/sessions/${session.id}`)}>Join Now</button>
                   </div>
@@ -224,10 +224,10 @@ export default function Home() {
                 
                 <div className="strip-media-block">
                   <img 
-                    src={item.image || "https://unsplash.com"} 
+                    src={item.image} 
                       alt="Game Thumb" 
                       className="strip-thumb-photo" 
-                      onError={(e) => { e.target.src = "https://unsplash.com" }}
+                     
                   />
                   <h4 className="strip-game-name-text">{item.game}</h4>
                   <h3 className="strip-lobby-title-text">{item.title}</h3>
@@ -291,11 +291,11 @@ export default function Home() {
                 friends.map((friend) => (
                   <div key={friend.session_id || friend.id || friend.username} className="friend-list-item" style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
                     <img 
-                      src={friend.avatar_url || "https://picsum.photos"} 
+                      src={friend.avatar_url} 
                       alt={friend.username}
                       className="friend-avatar-node" 
                       style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(255,255,255,0.1)" }} 
-                      onError={(e) => { e.target.src = "https://picsum.photos"; }}
+                      
                     />
                     <div className="friend-item-info" style={{ display: "flex", flexDirection: "column" }}>
                       <span className="friend-item-name" style={{ fontSize: "0.85rem", fontWeight: "700" }}>
@@ -319,10 +319,10 @@ export default function Home() {
               <div key={rec.id} className="sidebar-recommendation-item-card">
                 <div className="rec-info-left-group">
                   <img 
-                    src={rec.cover || "https://unsplash.com"} 
+                    src={rec.cover} 
                     alt="Recommendation Cover" 
                     className="rec-avatar-placeholder-art" 
-                    onError={(e) => { e.target.src = "https://unsplash.com" }}
+   
                   />
                   <h4 className="rec-game-title-header">{rec.title}</h4>
                   <p className="rec-lobby-subtitle-caption">{rec.subtitle}</p>
