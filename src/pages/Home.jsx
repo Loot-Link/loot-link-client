@@ -69,7 +69,7 @@ export default function Home() {
         setRecommendations(recommendedRooms);
 
         // 4. Dynamic Sidebar Real Friends List Fetch Request
-        const friendsResponse = await fetch("http://localhost:3000/api/friendslist", {
+        const friendsResponse = await fetch(`${API}/api/friendslist`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`, 
           },
