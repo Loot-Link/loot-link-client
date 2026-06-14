@@ -37,7 +37,7 @@ export default function WriteReviews() {
             setEditingReviewId(reviewId);
 
             try {
-                const response = await fetch(`${API}/game-reviews/${reviewId}`, {
+                const response = await fetch(`${API}/api/game-reviews/${reviewId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -70,7 +70,7 @@ export default function WriteReviews() {
         const fetchGames = async () => {
             setGamesLoading(true);
             try {
-                const response = await fetch(`${API}/games`, {
+                const response = await fetch(`${API}/api/games`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -121,7 +121,7 @@ export default function WriteReviews() {
 
         try {
             const method = editingReviewId ? "PATCH" : "POST";
-            const url = editingReviewId ? `${API}/game-reviews/${editingReviewId}` : `${API}/game-reviews`;
+            const url = editingReviewId ? `${API}/api/game-reviews/${editingReviewId}` : `${API}/api/game-reviews`;
             
             const response = await fetch(url, {
                 method,
