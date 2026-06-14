@@ -23,7 +23,7 @@ export default function GameReviewDetails() {
     }
     
     try {
-      const response = await fetch(`${API}/game-reviews/${id}`);
+      const response = await fetch(`${API}/api/game-reviews/${id}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,7 +43,7 @@ export default function GameReviewDetails() {
       const headers = {};
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
-      const resp = await fetch(`${API}/game-reviews/${id}/votes`, { headers });
+      const resp = await fetch(`${API}/api/game-reviews/${id}/votes`, { headers });
       if (!resp.ok) throw new Error('Failed to fetch votes');
       const data = await resp.json();
       setVotes(data);
@@ -62,7 +62,7 @@ export default function GameReviewDetails() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`${API}/game-reviews/${id}`, {
+      const response = await fetch(`${API}/api/game-reviews/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -95,7 +95,7 @@ export default function GameReviewDetails() {
     try {
       // If user already voted same value, remove vote
       if (votes.userVote === value) {
-        const resp = await fetch(`${API}/game-reviews/${id}/vote`, {
+        const resp = await fetch(`${API}/api/game-reviews/${id}/vote`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -105,7 +105,7 @@ export default function GameReviewDetails() {
         return;
       }
 
-      const resp = await fetch(`${API}/game-reviews/${id}/vote`, {
+      const resp = await fetch(`${API}/api/game-reviews/${id}/vote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
