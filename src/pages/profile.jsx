@@ -121,9 +121,9 @@ export default function Profile() {
   }, [user?.xbox_xuid]);
 
   // Handlers
-  const connectSteam = () => { window.location.href = `${API}/connections/steam?token=${token}`; };
-  const connectXbox = () => { window.location.href = `${API}/connections/xbox?token=${token}`; };
-  const connectBattleNet = () => { window.location.href = `${API}/connections/battlenet?token=${token}`; };  
+  const connectSteam = () => { window.location.href = `${API}/api/connections/steam?token=${token}`; };
+  const connectXbox = () => { window.location.href = `${API}/api/connections/xbox?token=${token}`; };
+  const connectBattleNet = () => { window.location.href = `${API}/api/connections/battlenet?token=${token}`; };  
   const handleSaveProfile = async () =>{
     const response = await fetch(`${API}/api/users/me`, {
       method: "POST",
