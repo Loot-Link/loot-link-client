@@ -18,7 +18,7 @@ export default function GameDetails() {
       return;
     }    
     try {
-      const response = await fetch(`${API}/games/${gameId}`);
+      const response = await fetch(`${API}/api/games/${gameId}`);
       
       // Check if response is ok before parsing
       if (!response.ok) {

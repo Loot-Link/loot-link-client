@@ -16,7 +16,7 @@ export default function GameReviews() {
   const [minRating, setMinRating] = useState("any");
 
   const syncGameReviews = async () => {
-    const response = await fetch(`${API}/game-reviews`);
+    const response = await fetch(`${API}/api/game-reviews`);
     const data = await response.json();
     setGameReviews(data);
   };
