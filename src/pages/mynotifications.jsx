@@ -65,7 +65,7 @@ export default function Home() {
   // get users for dropdown
   const syncSetAllUsers = async () => {
     try {
-      const response = await fetch(`${API}/users/dropdown`, {
+      const response = await fetch(`${API}/api/users/dropdown`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -81,7 +81,7 @@ export default function Home() {
   // get notification types for dropdown
   const getNotificationTypes = async () => {
     try {
-      const response = await fetch(`${API}/notifications/types`);
+      const response = await fetch(`${API}/api/notifications/types`);
       const data = await response.json();
 
       setNotificationTypes(data);
@@ -104,7 +104,7 @@ export default function Home() {
     try {
       setCreateNotificationError("");
 
-      const response = await fetch(`${API}/notifications`, {
+      const response = await fetch(`${API}/api/notifications`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export default function Home() {
       }
 
       const response = await fetch(
-        `${API}/notifications/mynotifications`,
+        `${API}/api/notifications/mynotifications`,
         { headers }
       );
 

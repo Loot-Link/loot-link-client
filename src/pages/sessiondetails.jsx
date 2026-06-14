@@ -27,7 +27,7 @@ export default function SessionDetails() {
   const [userSessionReview, setUserSessionReview] = useState(null);
   const syncSetAllUsers = async () => {
     try {
-    const response = await fetch(`${API}/users/dropdown`, {
+    const response = await fetch(`${API}/api/users/dropdown`, {
         headers: { Authorization: `Bearer ${token}` }
       });
     const data = await response.json();
@@ -44,7 +44,7 @@ export default function SessionDetails() {
     }
 
     try {
-      const res = await fetch(`${API}/session-reviews/${sessionId}/user`, {
+      const res = await fetch(`${API}/api/session-reviews/${sessionId}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -64,7 +64,7 @@ export default function SessionDetails() {
   // 1. Session Data Fetch
   const syncSession = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}`);
       const data = await response.json();
       setSession(data);
     } catch (err) {
@@ -75,7 +75,7 @@ export default function SessionDetails() {
   // 2. Session Users Fetch (With original automatic desktop notification watcher)
   const syncSessionUsers = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/users`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}/users`);
       const data = await response.json();
       
       const currentUserId = user?.user_id ?? user?.id;
@@ -99,7 +99,7 @@ export default function SessionDetails() {
   // 3. Session Messages Fetch
   const syncSessionMessages = async () => {
     try {
-      const response = await fetch(`${API}/session-messages/${sessionId}`);
+      const response = await fetch(`${API}/api/session-messages/${sessionId}`);
       if (!response.ok) throw Error("Failed to fetch messages");
       const data = await response.json();
       setSessionMessages(data);
@@ -111,7 +111,7 @@ export default function SessionDetails() {
   // 4. Isolated Ready List Status Fetch
   const syncReadyCheckList = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/ready-list`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}/ready-list`);
       if (response.ok) {
         const data = await response.json();
         const activeReadyIds = data.readyUserIds || [];
@@ -190,7 +190,7 @@ export default function SessionDetails() {
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      const response = await fetch(`${API}/session-messages`, {
+      const response = await fetch(`${API}/api/session-messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +210,7 @@ export default function SessionDetails() {
   // Toggle ready check positions
   const handleToggleReady = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/ready`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/ready`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -223,7 +223,7 @@ export default function SessionDetails() {
   // Force reset ready checks
   const handleResetReadyCheck = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/ready-reset`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/ready-reset`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -237,7 +237,7 @@ export default function SessionDetails() {
   const handleAddUserToSession = async () => {
     if (!selectedUserID) return;
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/addUser`, {
+      const response = await fetch(`${API}/api/sessions/${sessionId}/addUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -263,7 +263,7 @@ export default function SessionDetails() {
   // Handle Joining the session manually
   const handleJoinSession = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/join`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/join`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -279,7 +279,7 @@ export default function SessionDetails() {
   const handleDeleteSession = async () => {
     if (!window.confirm("Are you sure you want to close this lobby?")) return;
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -294,7 +294,7 @@ export default function SessionDetails() {
   const handleLeaveSession = async () => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/leave`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/leave`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -308,7 +308,7 @@ export default function SessionDetails() {
   // Handle Host settings changes (With active matchmaking pipeline hooks)
   const handleUpdateLobbySettings = async (updatedCapacity, updatedStatus, updatedMatchmaking) => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/settings`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/settings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -338,9 +338,9 @@ export default function SessionDetails() {
 
   const currentUserId = user?.user_id ?? user?.id;
   const isUserInSession = sessionUsers.some((pUser) => Number(pUser.user_id) === Number(currentUserId));
-const isLobbyHost = Number(currentUserId) === Number(session.host_user_id);
-const isLobbyLocked = session.session_status === 'locked';
-const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
+  const isLobbyHost = Number(currentUserId) === Number(session.host_user_id);
+  const isLobbyLocked = session.session_status === 'locked';
+  const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
 
 // DISCORD LINK PARSER
   const hasDiscordLink = session.session_description?.includes("https://discord.gg");

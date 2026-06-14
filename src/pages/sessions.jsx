@@ -17,7 +17,7 @@ export default function Sessions() {
 
   const syncSessions = async () => {
     // const response = await fetch(`${API}/sessions`);
-    const response = await fetch(`${API}/sessions`);
+    const response = await fetch(`${API}/api/sessions`);
     const data = await response.json();
     console.log(data);
     setSessions(data);
@@ -26,7 +26,7 @@ export default function Sessions() {
     // Handle Automatic Search Engine Routing
   const handleTriggerAutoMatchmaking = async () => {
     try {
-      const res = await fetch(`${API}/sessions/matchmaking/auto-fill`, {
+      const res = await fetch(`${API}/api/sessions/matchmaking/auto-fill`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Leverages your existing global Auth context tokens
