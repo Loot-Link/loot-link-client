@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SessionReviewModal from "./Reviews/session-reviews";
 import "./sessiondetails.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function SessionDetails() {
   const { sessionId } = useParams();

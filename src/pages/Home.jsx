@@ -13,12 +13,13 @@ export default function Home() {
   const [friends, setFriends] = useState([]);
   const [featuredGame, setFeaturedGame] = useState(null);
   const [_loading, setLoading] = useState(true);
+  const API = import.meta.env.VITE_API;
 
   useEffect(() => {
     async function loadLivePlatformData() {
       try {
         // 1. Fetch your live database sessions (which already includes game names and images via SQL JOIN)
-        const response = await fetch("http://localhost:3000/api/sessions");
+        const response = await fetch(`${API}/api/sessions`);
         if (!response.ok) throw new Error("Database offline");
         const data = await response.json();
         setLoading(false);

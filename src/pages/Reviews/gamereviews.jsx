@@ -3,7 +3,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "./gamereviews.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function GameReviews() {
   const { user } = useAuth();

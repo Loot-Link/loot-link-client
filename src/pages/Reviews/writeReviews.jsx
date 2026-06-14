@@ -3,7 +3,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./writeReviews.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function WriteReviews() {
     const { token, user } = useAuth();

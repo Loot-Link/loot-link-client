@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import "./raidhelperevents.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 
 

@@ -40,7 +40,7 @@ const iconMap = {
 };
 
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function Home() {
   const { token } = useAuth();

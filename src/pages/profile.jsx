@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import "./profile.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function Profile() {
   const { token } = useAuth();

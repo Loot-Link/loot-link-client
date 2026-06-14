@@ -6,7 +6,7 @@ export default function CreateSessionDialog({ game, onDismiss }) {
   const { token } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-  const API = "http://localhost:3000/api";
+  const API = import.meta.env.VITE_API;
 
   const handleLaunch = async (formData) => {
     setError(null);
