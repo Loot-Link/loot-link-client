@@ -11,7 +11,7 @@ export default function CreateSessionDialog({ game, onDismiss }) {
   const handleLaunch = async (formData) => {
     setError(null);
     try {
-      const res = await fetch(`${API}/sessions`, {
+      const res = await fetch(`${API}/api/sessions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
