@@ -17,7 +17,7 @@ export default function Games() {
   const [ favorites, setFavorites ] = useState([]);
 
   const syncGames = async () => {
-    const response = await fetch(`${API}/games`);
+    const response = await fetch(`${API}/api/games`)
     const data = await response.json();
     setGames(data);
   };
@@ -34,7 +34,7 @@ export default function Games() {
   async function fetchUserFavorites() {
     if (!user?.id || !token ) return;
     try {
-      const response = await fetch(`${API}/users/${user.id}/favorites`, {
+      const response = await fetch(`${API}/api/users/${user.id}/favorites`, {
         headers: {"Authorization": `Bearer ${token}`}
       });
       if (response.ok) {
@@ -56,7 +56,7 @@ const handleFavoriteToggle = async (e, game) => {
   }
 
   try {
-    const response = await fetch(`${API}/users/${user.id}/favorites`, {
+    const response = await fetch(`${API}/api/users/${user.id}/favorites`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

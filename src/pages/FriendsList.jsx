@@ -14,7 +14,7 @@ export default function FriendsList(){
     //Gets the list of friends from API
     const fetchFriends = useCallback(async () =>{
       if(!token) return;
-      const response = await fetch(`${API}/friendslist`, 
+      const response = await fetch(`${API}/api/friendslist`, 
         {
           headers: { "Authorization" : `Bearer ${token}`}
         });
@@ -24,7 +24,7 @@ export default function FriendsList(){
     //Gets the list of pending requests from API
     const fetchRequests = useCallback(async () =>{
       if(!token) return;
-      const response = await fetch(`${API}/friendslist/requests`,
+      const response = await fetch(`${API}/api/friendslist/requests`,
         {
           headers: { "Authorization" : `Bearer ${token}`}
         });
@@ -33,7 +33,7 @@ export default function FriendsList(){
     }, [token]);
     const fetchBlocks = useCallback(async ()=>{
       if(!token) return;
-      const response = await fetch(`${API}/friendslist/blocklist`,
+      const response = await fetch(`${API}/api/friendslist/blocklist`,
       {
         headers: { "Authorization": `Bearer ${token}`}
       });
@@ -43,7 +43,7 @@ export default function FriendsList(){
     //Handler function for button to send friend requests
     const handleSendRequest = async (username) =>{
     try {
-      const response = await fetch(`${API}/friendslist/request/${username}`,
+      const response = await fetch(`${API}/api/friendslist/request/${username}`,
         {
           method: "POST",
           headers: {
@@ -65,7 +65,7 @@ export default function FriendsList(){
  }
  //Handler function for button to Accept pending requests
  const handleAccept=async(senderId)=>{
-    const response = await fetch(`${API}/friendslist/accept/${senderId}`,
+    const response = await fetch(`${API}/api/friendslist/accept/${senderId}`,
         {
             method: "POST",
             headers: {
@@ -83,7 +83,7 @@ export default function FriendsList(){
     } 
   //Handler function for button to deny pending requests
   const handleDeny = async (senderId)=>{
-    const response = await fetch(`${API}/friendslist/deny/${senderId}`,
+    const response = await fetch(`${API}/api/friendslist/deny/${senderId}`,
         {
             method: "POST",
             headers: {
@@ -101,7 +101,7 @@ export default function FriendsList(){
   }
   //Handler function for button to block other users
   const handleBlock = async (receiverId)=>{
-    const response = await fetch(`${API}/friendslist/blocklist/${receiverId}`,
+    const response = await fetch(`${API}/api/friendslist/blocklist/${receiverId}`,
       {
         method: "POST",
         headers: {
@@ -121,7 +121,7 @@ export default function FriendsList(){
   //Handler function for button to UN-block other users
   const handleUnblock = async (receiverId)=>{
     console.log("Unblock request received for user ID: ", receiverId);
-    const response = await fetch(`${API}/friendslist/blocklist/${receiverId}`,
+    const response = await fetch(`${API}/api/friendslist/blocklist/${receiverId}`,
       {
         method: "DELETE",
         headers: {
@@ -139,7 +139,7 @@ export default function FriendsList(){
       }
   }
   const handleCancel = async (senderId) =>{
-    const response = await fetch(`${API}/friendslist/request/${senderId}`,
+    const response = await fetch(`${API}/api/friendslist/request/${senderId}`,
        {
         method: "DELETE",
         headers: {
