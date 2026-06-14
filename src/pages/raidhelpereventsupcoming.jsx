@@ -44,7 +44,7 @@ export default function RaidHelperEvents() {
 
   useEffect(() => {
     async function fetchEvents() {
-      const res = await fetch(`${API}/raidhelper/imported`, {
+      const res = await fetch(`${API}/api/raidhelper/imported`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
