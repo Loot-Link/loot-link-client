@@ -116,9 +116,9 @@ const calendarDays = Array.from({ length: 7 }, (_, i) => {
       </div>
 
       <section className="raid-calendar">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div className="raid-calendar__header" key={day}>
-            {day}
+        {calendarDays.map((day) => (
+          <div className="raid-calendar__header" key={day.toISOString()}>
+            {day.toLocaleDateString("default", { weekday: "short" })}
           </div>
         ))}
 
