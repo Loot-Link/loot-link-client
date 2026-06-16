@@ -399,46 +399,46 @@ export default function SessionDetails() {
         <aside className="session-users-panel">
           <h3 className="session-users-heading"> 🛡️ Joined Players ({sessionUsers.length}/{session.max_users}) </h3>
             {sessionUsers.map((member) => (
-              <div key={member.user_id} className="session-user-card">
-                <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
-                <div className="session-user-info">
-                  <div className="session-username">
-                    {member.username}
-                    {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
-                  </div>
-                  <div style={{ marginTop: '4px' }}>
-                    <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
-                      {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
-                    </span>
-                  </div>
-                </div>
 
-                {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
-                  // <button onClick={() => handleKickUser(member.user_id)} style={{ marginLeft: 'auto', background: '#ff4a4a', border: 'none', borderRadius: '6px', color: '#fff', padding: '4px 10px', cursor: 'pointer', fontSize: '0.75rem' }}>
-                  //   <img src={bootIcon} alt="kick" style={{ width: '16px', height: '16px' }} />
-                  //   Kick
-                  // </button>
-                  <button 
-                    onClick={() => handleKickUser(member.user_id)} 
-                    style={{ 
-                      marginLeft: 'auto', 
-                      background: 'transparent', 
-                      border: '1px solid #ff4a4a', 
-                      borderRadius: '6px', 
-                      color: '#ff4a4a', 
-                      padding: '4px 8px', 
-                      cursor: 'pointer', 
-                      fontSize: '0.75rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <img src={bootIcon} alt="kick" style={{ width: '14px', height: '14px', verticalAlign: 'middle' }} />
-                    Kick
-                  </button>
-                )}
-              </div>
+              <div key={member.user_id} className="session-user-card">
+  <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
+  <div className="session-user-info">
+    <div className="session-username" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span>
+        {member.username}
+        {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
+      </span>
+      {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
+        <button 
+          onClick={() => handleKickUser(member.user_id)} 
+          style={{ 
+            background: 'transparent', 
+            border: '1px solid #ff4a4a', 
+            borderRadius: '6px', 
+            color: '#ff4a4a', 
+            padding: '3px 8px', 
+            cursor: 'pointer', 
+            fontSize: '0.75rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+        >
+          <img src={bootIcon} alt="kick" style={{ width: '20px', height: '20px' }} />
+          Kick
+        </button>
+      )}
+    </div>
+    <div style={{ marginTop: '4px' }}>
+      <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
+        {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
+      </span>
+    </div>
+  </div>
+</div>
+
+
+
             ))}
 
           {!isUserInSession && !isLobbyHost && (
