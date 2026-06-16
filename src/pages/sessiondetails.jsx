@@ -409,22 +409,22 @@ export default function SessionDetails() {
                       {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
                     </span>
                     {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
-<button 
-  onClick={() => handleKickUser(member.user_id)} 
-  style={{ 
-    background: 'transparent', 
-    border: 'none', 
-    cursor: 'pointer', 
-    padding: '4px',
-    opacity: 0.5,
-    transition: 'opacity 0.2s'
-  }}
-  onMouseEnter={e => e.currentTarget.style.opacity = 1}
-  onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
-  title="Kick player"
->
-  <img src={bootIcon} alt="kick" style={{ width: '24px', height: '24px' }} />
-</button>
+                      <button 
+                        onClick={() => handleKickUser(member.user_id)} 
+                        style={{ 
+                          background: 'transparent', 
+                          border: 'none', 
+                          cursor: 'pointer', 
+                          padding: '4px',
+                          opacity: 0.5,
+                          transition: 'opacity 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                        onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
+                        title="Kick player"
+                      >
+                        <img src={bootIcon} alt="kick" style={{ width: '40px', height: '40px' }} />
+                      </button>
                     )}
                   </div>
                   <div style={{ marginTop: '4px' }}>
