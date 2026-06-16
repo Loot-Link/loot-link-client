@@ -3,6 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import SessionReviewModal from "./Reviews/session-reviews";
 import "./sessiondetails.css";
+import bootIcon from "../assets/boot.png";
 
 const API = import.meta.env.VITE_API;
 
@@ -414,6 +415,7 @@ export default function SessionDetails() {
 
                 {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
                   <button onClick={() => handleKickUser(member.user_id)} style={{ marginLeft: 'auto', background: '#ff4a4a', border: 'none', borderRadius: '6px', color: '#fff', padding: '4px 10px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                    <img src={bootIcon} alt="kick" style={{ width: '16px', height: '16px' }} />
                     Kick
                   </button>
                 )}
