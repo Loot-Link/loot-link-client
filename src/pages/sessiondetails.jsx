@@ -401,44 +401,39 @@ export default function SessionDetails() {
             {sessionUsers.map((member) => (
 
               <div key={member.user_id} className="session-user-card">
-  <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
-  <div className="session-user-info">
-    <div className="session-username" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <span>
-        {member.username}
-        {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
-      </span>
-      {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
-        <button 
-          onClick={() => handleKickUser(member.user_id)} 
-          style={{ 
-            background: 'transparent', 
-            border: '1px solid #ff4a4a', 
-            borderRadius: '6px', 
-            color: '#ff4a4a', 
-            padding: '3px 8px', 
-            cursor: 'pointer', 
-            fontSize: '0.75rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}
-        >
-          <img src={bootIcon} alt="kick" style={{ width: '20px', height: '20px' }} />
-          Kick
-        </button>
-      )}
-    </div>
-    <div style={{ marginTop: '4px' }}>
-      <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
-        {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
-      </span>
-    </div>
-  </div>
-</div>
-
-
-
+                <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
+                <div className="session-user-info">
+                  <div className="session-username" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>
+                      {member.username}
+                      {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
+                    </span>
+                    {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
+<button 
+  onClick={() => handleKickUser(member.user_id)} 
+  style={{ 
+    background: 'transparent', 
+    border: 'none', 
+    cursor: 'pointer', 
+    padding: '4px',
+    opacity: 0.5,
+    transition: 'opacity 0.2s'
+  }}
+  onMouseEnter={e => e.currentTarget.style.opacity = 1}
+  onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
+  title="Kick player"
+>
+  <img src={bootIcon} alt="kick" style={{ width: '24px', height: '24px' }} />
+</button>
+                    )}
+                  </div>
+                  <div style={{ marginTop: '4px' }}>
+                    <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
+                      {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
 
           {!isUserInSession && !isLobbyHost && (
