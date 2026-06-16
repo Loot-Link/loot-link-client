@@ -179,11 +179,11 @@ export default function Home() {
     <main>
       <h1>My Notifications!</h1>
 
-      <p>
+      {/* <p>
         {token
           ? "Logged in: showing all N."
           : "Logged out: showing public N."}
-      </p>
+      </p> */}
 
       {loading && <p>Loading notifications...</p>}
       {error && <p>{error}</p>}
