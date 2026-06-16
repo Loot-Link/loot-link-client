@@ -163,13 +163,17 @@ export default function SessionDetails() {
     const interval = setInterval(() => {
       syncSessionUsers();
       syncReadyCheckList();
+      syncSessionMessages();
+      syncSession();
     }, 3000);
 
     return () => {
       clearInterval(interval);
       clearInterval(countdownTimerRef.current);
     };
-  }, [sessionId, countdown, sessionUsers.length]);
+  // }, [sessionId, countdown, sessionUsers.length]);
+  }, [sessionId]);
+
 
   useEffect(() => {
     if (!sessionId) return;
