@@ -414,8 +414,27 @@ export default function SessionDetails() {
                 </div>
 
                 {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
-                  <button onClick={() => handleKickUser(member.user_id)} style={{ marginLeft: 'auto', background: '#ff4a4a', border: 'none', borderRadius: '6px', color: '#fff', padding: '4px 10px', cursor: 'pointer', fontSize: '0.75rem' }}>
-                    <img src={bootIcon} alt="kick" style={{ width: '16px', height: '16px' }} />
+                  // <button onClick={() => handleKickUser(member.user_id)} style={{ marginLeft: 'auto', background: '#ff4a4a', border: 'none', borderRadius: '6px', color: '#fff', padding: '4px 10px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                  //   <img src={bootIcon} alt="kick" style={{ width: '16px', height: '16px' }} />
+                  //   Kick
+                  // </button>
+                  <button 
+                    onClick={() => handleKickUser(member.user_id)} 
+                    style={{ 
+                      marginLeft: 'auto', 
+                      background: 'transparent', 
+                      border: '1px solid #ff4a4a', 
+                      borderRadius: '6px', 
+                      color: '#ff4a4a', 
+                      padding: '4px 8px', 
+                      cursor: 'pointer', 
+                      fontSize: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <img src={bootIcon} alt="kick" style={{ width: '14px', height: '14px', verticalAlign: 'middle' }} />
                     Kick
                   </button>
                 )}
