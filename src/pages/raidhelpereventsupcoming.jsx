@@ -44,10 +44,10 @@ export default function RaidHelperEvents() {
 
   useEffect(() => {
     async function fetchEvents() {
-      const res = await fetch(`${API}/api/raidhelper/imported`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      // const res = await fetch(`${API}/api/raidhelper/imported`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
+      const res = await fetch(`${API}/api/raidhelper/imported`);
       const data = await res.json();
 
       const mappedEvents = data.map((raid) => {
@@ -69,7 +69,8 @@ export default function RaidHelperEvents() {
       console.log("Mapped raid calendar events:", mappedEvents);
     }
 
-    if (token) fetchEvents();
+    //if (token) fetchEvents();
+    fetchEvents();
   }, [token]);
 
 const today = new Date();

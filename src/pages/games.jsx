@@ -50,6 +50,7 @@ export default function Games() {
 
 const handleFavoriteToggle = async (e, game) => {
   e.preventDefault(); 
+  console.log("user:", user, "token:", token); // add this
   if (!user?.id || !token) {
     alert("Please log in to favorite games.");
     return;
