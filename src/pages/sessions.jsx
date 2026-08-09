@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams  } from "react-router-dom";
 import "./sessions.css"; //client/src/pages/Sessions.css
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 // const API = "import.meta.env.VITE_API";
 
 export default function Sessions() {
@@ -12,10 +12,12 @@ export default function Sessions() {
   const [viewMode, setViewMode] = useState("grid");
   const { token, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const gameIdFilter = searchParams.get("gameId");
 
   const syncSessions = async () => {
     // const response = await fetch(`${API}/sessions`);
-    const response = await fetch(`${API}/sessions`);
+    const response = await fetch(`${API}/api/sessions`);
     const data = await response.json();
     console.log(data);
     setSessions(data);
@@ -24,7 +26,7 @@ export default function Sessions() {
     // Handle Automatic Search Engine Routing
   const handleTriggerAutoMatchmaking = async () => {
     try {
-      const res = await fetch(`${API}/sessions/matchmaking/auto-fill`, {
+      const res = await fetch(`${API}/api/sessions/matchmaking/auto-fill`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Leverages your existing global Auth context tokens
@@ -54,12 +56,26 @@ export default function Sessions() {
     init();
   }, []);
 
-  const filteredSessions = sessions.filter((session) =>
-    session.session_title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredSessions = sessions.filter((session) =>
+  //   session.session_title.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+  const filteredSessions = sessions.filter((session) => {
+    const matchesSearch = session.session_title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesGame = gameIdFilter
+      ? Number(session.game_id) === Number(gameIdFilter)
+      : true;
+
+    return matchesSearch && matchesGame;
+  });
 
   const currentUserId = user?.user_id ?? user?.id;
 
+
+
+  
   return (
     <section className="sessions-page">
       <div className="sessions-page__header">

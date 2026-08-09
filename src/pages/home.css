@@ -98,16 +98,16 @@
 
   width: 100%;
 
-  padding: 50px 10px;
+  /* padding: 50px 10px; */
 
-  border-radius: 24px;
+  border-radius: 8px;
 
   overflow: hidden;
 
-  background-size: cover;
-  background-position: center;
+  background-position: center top;
 
-  margin-bottom: 40px;
+
+  margin-bottom: 10px;
 
   border: 1px solid rgba(255,255,255,.05);
 
@@ -121,6 +121,7 @@
   display: flex;
   align-items: center;
   gap: 60px;
+  padding-left:25px
 }
 
 .hero-text {

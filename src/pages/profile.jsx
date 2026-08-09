@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import "./profile.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function Profile() {
   const { token } = useAuth();
@@ -24,7 +24,7 @@ export default function Profile() {
   useEffect(() => {
     async function getProfile() {
       try {
-        const res = await fetch(`${API}/users/me`, {
+        const res = await fetch(`${API}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load profile");
@@ -40,7 +40,7 @@ export default function Profile() {
   useEffect(() => {
     async function fetchFavorite(){
       try {
-        const response = await fetch(`${API}/users/${user?.user_id}/favorites`, {
+        const response = await fetch(`${API}/api/users/${user?.user_id}/favorites`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -66,7 +66,7 @@ export default function Profile() {
     async function getMySessions() {
       try {
         // This hits the route that calls getSessionsByUserId
-        const res = await fetch(`${API}/sessions/user/me`, {
+        const res = await fetch(`${API}/api/sessions/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
@@ -83,7 +83,7 @@ export default function Profile() {
     async function getRecentSteamGames() {
       if (!user?.steam_id) return;
       try {
-        const res = await fetch(`${API}/steam/${user.steam_id}/recent-games`);
+        const res = await fetch(`${API}/api/steam/${user.steam_id}/recent-games`);
         const data = await res.json();
         // Steam API usually nests the array in response.games
         setRecentSteamGames(data.response?.games || []);
@@ -98,7 +98,7 @@ export default function Profile() {
     async function getMySteamGames() {
       if (!user?.steam_id) return;
       try {
-        const res = await fetch(`${API}/steam/${user.steam_id}/owned-games`);
+        const res = await fetch(`${API}/api/steam/${user.steam_id}/owned-games`);
         const data = await res.json();
         // setMySteamGames(data.response?.games || []);
         setMySteamGames(data.response?.games || data.games || data || []);
@@ -113,7 +113,7 @@ export default function Profile() {
   useEffect(() => {
     async function getXboxProfile() {
       if (!user?.xbox_xuid) return;
-      const res = await fetch(`${API}/xbox/${user.xbox_xuid}/profile`);
+      const res = await fetch(`${API}/api/xbox/${user.xbox_xuid}/profile`);
       const data = await res.json();
       setXboxProfile(data?.data?.profileUsers?.[0] || data?.data?.content?.profileUsers?.[0]);
     }
@@ -121,11 +121,11 @@ export default function Profile() {
   }, [user?.xbox_xuid]);
 
   // Handlers
-  const connectSteam = () => { window.location.href = `${API}/connections/steam?token=${token}`; };
-  const connectXbox = () => { window.location.href = `${API}/connections/xbox?token=${token}`; };
-  const connectBattleNet = () => { window.location.href = `${API}/connections/battlenet?token=${token}`; };  
+  const connectSteam = () => { window.location.href = `${API}/api/connections/steam?token=${token}`; };
+  const connectXbox = () => { window.location.href = `${API}/api/connections/xbox?token=${token}`; };
+  const connectBattleNet = () => { window.location.href = `${API}/api/connections/battlenet?token=${token}`; };  
   const handleSaveProfile = async () =>{
-    const response = await fetch(`${API}/users/me`, {
+    const response = await fetch(`${API}/api/users/me`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -153,7 +153,7 @@ export default function Profile() {
 const handleFavoriteToggle = async (e, game) => {
   e.preventDefault(); 
   try {
-    const response = await fetch(`${API}/users/${user.id}/favorites`, {
+    const response = await fetch(`${API}/api/users/${user.id}/favorites`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

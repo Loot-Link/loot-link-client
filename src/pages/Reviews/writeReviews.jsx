@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "./WriteReviews.css";
+import "./writeReviews.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function WriteReviews() {
     const { token, user } = useAuth();
@@ -37,7 +37,7 @@ export default function WriteReviews() {
             setEditingReviewId(reviewId);
 
             try {
-                const response = await fetch(`${API}/game-reviews/${reviewId}`, {
+                const response = await fetch(`${API}/api/game-reviews/${reviewId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -70,7 +70,7 @@ export default function WriteReviews() {
         const fetchGames = async () => {
             setGamesLoading(true);
             try {
-                const response = await fetch(`${API}/games`, {
+                const response = await fetch(`${API}/api/games`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -121,7 +121,7 @@ export default function WriteReviews() {
 
         try {
             const method = editingReviewId ? "PATCH" : "POST";
-            const url = editingReviewId ? `${API}/game-reviews/${editingReviewId}` : `${API}/game-reviews`;
+            const url = editingReviewId ? `${API}/api/game-reviews/${editingReviewId}` : `${API}/api/game-reviews`;
             
             const response = await fetch(url, {
                 method,
@@ -150,6 +150,24 @@ export default function WriteReviews() {
             setLoading(false);
         }
     };
+
+
+
+    useEffect(() => {
+        const gameIdFromUrl = searchParams.get("gameId");
+
+        if (!gameIdFromUrl || games.length === 0) return;
+
+        const game = games.find(
+            (g) => Number(g.game_id) === Number(gameIdFromUrl)
+        );
+
+        if (game) {
+            setSelectedGame(game);
+            setGameId(game.game_id);
+        }
+    }, [games, searchParams]);
+
 
     return (
         <>

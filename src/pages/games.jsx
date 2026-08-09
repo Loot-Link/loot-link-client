@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import CreateSessionDialog from "./CreateSessionDialog";
 import "./games.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 // const API = "import.meta.env.VITE_API";
 
 export default function Games() {
@@ -17,7 +17,7 @@ export default function Games() {
   const [ favorites, setFavorites ] = useState([]);
 
   const syncGames = async () => {
-    const response = await fetch(`${API}/games`);
+    const response = await fetch(`${API}/api/games`)
     const data = await response.json();
     setGames(data);
   };
@@ -34,7 +34,7 @@ export default function Games() {
   async function fetchUserFavorites() {
     if (!user?.id || !token ) return;
     try {
-      const response = await fetch(`${API}/users/${user.id}/favorites`, {
+      const response = await fetch(`${API}/api/users/${user.id}/favorites`, {
         headers: {"Authorization": `Bearer ${token}`}
       });
       if (response.ok) {
@@ -50,13 +50,14 @@ export default function Games() {
 
 const handleFavoriteToggle = async (e, game) => {
   e.preventDefault(); 
+  console.log("user:", user, "token:", token); // add this
   if (!user?.id || !token) {
     alert("Please log in to favorite games.");
     return;
   }
 
   try {
-    const response = await fetch(`${API}/users/${user.id}/favorites`, {
+    const response = await fetch(`${API}/api/users/${user.id}/favorites`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

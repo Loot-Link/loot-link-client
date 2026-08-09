@@ -12,7 +12,7 @@ export function NotificationProvider({ children }) {
 
     async function fetchNotifications() {
       try {
-        const response = await fetch("http://localhost:3000/api/notifications", {
+        const response = await fetch(`${import.meta.env.VITE_API}/api/notifications`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

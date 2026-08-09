@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const API = import.meta.env.VITE_API;
 
@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
       return JSON.parse(atob(savedToken.split(".")[1]));
     } catch {
       return null;
-    }
+    }    
   });
 
   
@@ -57,10 +57,37 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token");
   };
 
+  useEffect(() => {
+    if (!token) return;
+
+    const sendHeartbeat = async () => {
+      await fetch(API + "/api/users/heartbeat", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    };
+
+    sendHeartbeat();
+
+    const interval = setInterval(() => {
+      sendHeartbeat();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [token]);
+
+
+
   // const value = { token, register, login, logout };
   const value = { token, user, register, login, logout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
+
+
+
 
 export function useAuth() {
   const context = useContext(AuthContext);

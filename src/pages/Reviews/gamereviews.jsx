@@ -3,7 +3,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "./gamereviews.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function GameReviews() {
   const { user } = useAuth();
@@ -16,7 +16,7 @@ export default function GameReviews() {
   const [minRating, setMinRating] = useState("any");
 
   const syncGameReviews = async () => {
-    const response = await fetch(`${API}/game-reviews`);
+    const response = await fetch(`${API}/api/game-reviews`);
     const data = await response.json();
     setGameReviews(data);
   };

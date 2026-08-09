@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import "./session-reviews.css";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 const descriptorOptions = ["Friendly", "Good Teammate", "Fun", "Rude", "Comms Abuse"];
 
 function getDefaultMemberRatings(members) {

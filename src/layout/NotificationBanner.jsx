@@ -11,7 +11,7 @@ export default function NotificationBanner() {
 
   async function handleDismiss() {
     await fetch(
-      `http://localhost:3000/api/notifications/${notification.notification_id}/read`,
+      `${import.meta.env.VITE_API}/api/notifications/${notification.notification_id}/read`,
       {
         method: "PATCH",
         headers: {

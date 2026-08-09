@@ -3,8 +3,9 @@ import { useAuth } from "../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import SessionReviewModal from "./Reviews/session-reviews";
 import "./sessiondetails.css";
+import bootIcon from "../assets/boot.png";
 
-const API = "http://localhost:3000/api";
+const API = import.meta.env.VITE_API;
 
 export default function SessionDetails() {
   const { sessionId } = useParams();
@@ -27,7 +28,7 @@ export default function SessionDetails() {
   const [userSessionReview, setUserSessionReview] = useState(null);
   const syncSetAllUsers = async () => {
     try {
-    const response = await fetch(`${API}/users/dropdown`, {
+    const response = await fetch(`${API}/api/users/dropdown`, {
         headers: { Authorization: `Bearer ${token}` }
       });
     const data = await response.json();
@@ -44,7 +45,7 @@ export default function SessionDetails() {
     }
 
     try {
-      const res = await fetch(`${API}/session-reviews/${sessionId}/user`, {
+      const res = await fetch(`${API}/api/session-reviews/${sessionId}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -64,7 +65,7 @@ export default function SessionDetails() {
   // 1. Session Data Fetch
   const syncSession = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}`);
       const data = await response.json();
       setSession(data);
     } catch (err) {
@@ -75,7 +76,7 @@ export default function SessionDetails() {
   // 2. Session Users Fetch (With original automatic desktop notification watcher)
   const syncSessionUsers = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/users`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}/users`);
       const data = await response.json();
       
       const currentUserId = user?.user_id ?? user?.id;
@@ -99,7 +100,7 @@ export default function SessionDetails() {
   // 3. Session Messages Fetch
   const syncSessionMessages = async () => {
     try {
-      const response = await fetch(`${API}/session-messages/${sessionId}`);
+      const response = await fetch(`${API}/api/session-messages/${sessionId}`);
       if (!response.ok) throw Error("Failed to fetch messages");
       const data = await response.json();
       setSessionMessages(data);
@@ -111,7 +112,7 @@ export default function SessionDetails() {
   // 4. Isolated Ready List Status Fetch
   const syncReadyCheckList = async () => {
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/ready-list`);
+      const response = await fetch(`${API}/api/sessions/${sessionId}/ready-list`);
       if (response.ok) {
         const data = await response.json();
         const activeReadyIds = data.readyUserIds || [];
@@ -163,13 +164,17 @@ export default function SessionDetails() {
     const interval = setInterval(() => {
       syncSessionUsers();
       syncReadyCheckList();
+      syncSessionMessages();
+      syncSession();
     }, 3000);
 
     return () => {
       clearInterval(interval);
       clearInterval(countdownTimerRef.current);
     };
-  }, [sessionId, countdown, sessionUsers.length]);
+  // }, [sessionId, countdown, sessionUsers.length]);
+  }, [sessionId]);
+
 
   useEffect(() => {
     if (!sessionId) return;
@@ -190,7 +195,7 @@ export default function SessionDetails() {
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      const response = await fetch(`${API}/session-messages`, {
+      const response = await fetch(`${API}/api/session-messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +215,7 @@ export default function SessionDetails() {
   // Toggle ready check positions
   const handleToggleReady = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/ready`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/ready`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -223,7 +228,7 @@ export default function SessionDetails() {
   // Force reset ready checks
   const handleResetReadyCheck = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/ready-reset`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/ready-reset`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -237,7 +242,7 @@ export default function SessionDetails() {
   const handleAddUserToSession = async () => {
     if (!selectedUserID) return;
     try {
-      const response = await fetch(`${API}/sessions/${sessionId}/addUser`, {
+      const response = await fetch(`${API}/api/sessions/${sessionId}/addUser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -260,10 +265,26 @@ export default function SessionDetails() {
     }
   };
 
+  //EMJ handle boot user from session
+  const handleKickUser = async (targetUserId) => {
+    if (!window.confirm("Kick this player?")) return;
+    try {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/kick/${targetUserId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await syncSessionUsers();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+
   // Handle Joining the session manually
   const handleJoinSession = async () => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/join`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/join`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -279,7 +300,7 @@ export default function SessionDetails() {
   const handleDeleteSession = async () => {
     if (!window.confirm("Are you sure you want to close this lobby?")) return;
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -294,7 +315,7 @@ export default function SessionDetails() {
   const handleLeaveSession = async () => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/leave`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/leave`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -308,7 +329,7 @@ export default function SessionDetails() {
   // Handle Host settings changes (With active matchmaking pipeline hooks)
   const handleUpdateLobbySettings = async (updatedCapacity, updatedStatus, updatedMatchmaking) => {
     try {
-      const res = await fetch(`${API}/sessions/${sessionId}/settings`, {
+      const res = await fetch(`${API}/api/sessions/${sessionId}/settings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -338,9 +359,9 @@ export default function SessionDetails() {
 
   const currentUserId = user?.user_id ?? user?.id;
   const isUserInSession = sessionUsers.some((pUser) => Number(pUser.user_id) === Number(currentUserId));
-const isLobbyHost = Number(currentUserId) === Number(session.host_user_id);
-const isLobbyLocked = session.session_status === 'locked';
-const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
+  const isLobbyHost = Number(currentUserId) === Number(session.host_user_id);
+  const isLobbyLocked = session.session_status === 'locked';
+  const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
 
 // DISCORD LINK PARSER
   const hasDiscordLink = session.session_description?.includes("https://discord.gg");
@@ -377,22 +398,43 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
       <div className="session-content">
         <aside className="session-users-panel">
           <h3 className="session-users-heading"> 🛡️ Joined Players ({sessionUsers.length}/{session.max_users}) </h3>
-          {sessionUsers.map((member) => (
-            <div key={member.user_id} className="session-user-card" >
-              <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
-              <div className="session-user-info">
-                <div className="session-username">
-                  {member.username}
-                  {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
-                </div>
-                <div style={{ marginTop: '4px' }}>
-                  <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
-                    {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
-                  </span>
+            {sessionUsers.map((member) => (
+
+              <div key={member.user_id} className="session-user-card">
+                <div className="session-user-avatar" style={{ border: '2px solid #4f7cff' }} />
+                <div className="session-user-info">
+                  <div className="session-username" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span>
+                      {member.username}
+                      {Number(member.user_id) === Number(session.host_user_id) && <span className="host-badge"> Host</span>}
+                    </span>
+                    {isLobbyHost && Number(member.user_id) !== Number(currentUserId) && (
+                      <button 
+                        onClick={() => handleKickUser(member.user_id)} 
+                        style={{ 
+                          background: 'transparent', 
+                          border: 'none', 
+                          cursor: 'pointer', 
+                          padding: '4px',
+                          opacity: 0.5,
+                          transition: 'opacity 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = 1}
+                        onMouseLeave={e => e.currentTarget.style.opacity = 0.5}
+                        title="Kick player"
+                      >
+                        <img src={bootIcon} alt="kick" style={{ width: '40px', height: '40px' }} />
+                      </button>
+                    )}
+                  </div>
+                  <div style={{ marginTop: '4px' }}>
+                    <span className={`ready-badge ready-badge--${readyUsers.includes(Number(member.user_id))}`}>
+                      {readyUsers.includes(Number(member.user_id)) ? "READY ✅" : "NOT READY ❌"}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
 
           {!isUserInSession && !isLobbyHost && (
             <>
@@ -416,7 +458,7 @@ const isCurrentPlayerReady = readyUsers.includes(Number(currentUserId));
                 type="text" 
                 value={userSearch} 
                 className="session-chat-input"
-                style={{ background: "#090e20", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "8px 12px", width: "100%", marginBottom: "5px" }}
+                style={{ background: "#090e20", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "6px", padding: "8px 12px", width: "calc(100% - 24px)", marginBottom: "5px" }}
                 onChange={(event) => { setUserSearch(event.target.value); setShowUserDropdown(true); }} 
                 placeholder="Search users..." 
               />
